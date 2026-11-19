@@ -1,0 +1,591 @@
+<!doctype html>
+<html lang="bn">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+<meta name="color-scheme" content="light dark" />
+<link rel="icon" href="data:," />
+<title>Bolt.new Backend Documentation</title>
+<style>
+  :root{
+    --bg:#ffffff; --bg-soft:#f6f8fa; --bg-code:#0d1117; --code-text:#e6edf3;
+    --text:#1f2328; --muted:#59636e; --faint:#818c98;
+    --border:#d1d9e0; --border-soft:#e3e8ee;
+    --accent:#0969da; --accent-soft:#ddf4ff; --accent-text:#0550ae;
+    --green:#1a7f37; --green-soft:#dafbe1;
+    --amber:#9a6700; --amber-soft:#fff8c5;
+    --red:#cf222e;
+    --sidebar-w:288px;
+    --radius:8px;
+    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali","Hind Siliguri",Helvetica,Arial,sans-serif;
+    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+  }
+  @media (prefers-color-scheme: dark){
+    :root{
+      --bg:#0d1117; --bg-soft:#161b22; --bg-code:#010409; --code-text:#e6edf3;
+      --text:#e6edf3; --muted:#9198a1; --faint:#6e7681;
+      --border:#30363d; --border-soft:#21262d;
+      --accent:#4493f8; --accent-soft:#122a4a; --accent-text:#79b8ff;
+      --green:#3fb950; --green-soft:#12261a;
+      --amber:#d29922; --amber-soft:#2b2103;
+      --red:#f85149;
+    }
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:var(--mono);font-size:.86em;background:var(--bg-soft);border:1px solid var(--border-soft);border-radius:5px;padding:.12em .38em}
+  button,[role="button"],summary,select,input:not([type="checkbox"]){min-height:2.25rem}
+
+  /* ---------- top bar ---------- */
+  .topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
+  .topbar .repo{display:flex;align-items:center;gap:10px;min-width:0}
+  .topbar .repo svg{flex:none;color:var(--muted)}
+  .topbar .repo .path{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .topbar .repo .path b{font-weight:600}
+  .topbar .repo .path span{color:var(--muted)}
+  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:999px;padding:2px 10px;color:var(--muted);white-space:nowrap}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .topbar .spacer{flex:1}
+  .topbar .ext{font-size:14px;font-weight:500;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);display:inline-flex;align-items:center;gap:6px}
+  .topbar .ext:hover{text-decoration:none;background:var(--bg-soft)}
+  .navtoggle{display:none;align-items:center;gap:8px;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font:inherit;font-size:14px;color:var(--text);cursor:pointer}
+
+  /* ---------- layout ---------- */
+  .layout{display:flex;align-items:flex-start;max-width:1440px;margin:0 auto}
+  aside{width:var(--sidebar-w);flex:none;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;padding:22px 14px 40px 20px;border-right:1px solid var(--border-soft)}
+  aside .group{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin:20px 8px 6px}
+  aside .group:first-child{margin-top:0}
+  aside nav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--text);font-size:14.5px;line-height:1.4;border-left:2px solid transparent}
+  aside nav a:hover{text-decoration:none;background:var(--bg-soft)}
+  aside nav a.active{background:var(--accent-soft);color:var(--accent-text);font-weight:600;border-left-color:var(--accent)}
+  aside .side-note{margin:22px 8px 0;font-size:13px;color:var(--muted);border-top:1px solid var(--border-soft);padding-top:14px}
+  main{flex:1;min-width:0;padding:34px 44px 90px;max-width:920px}
+  section{scroll-margin-top:76px;padding-bottom:14px}
+  section + section{border-top:1px solid var(--border-soft);padding-top:30px;margin-top:26px}
+
+  /* ---------- typography ---------- */
+  h1{font-size:34px;line-height:1.2;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
+  h2{font-size:24px;line-height:1.3;margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:10px}
+  h2 .num{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);border-radius:6px;padding:3px 8px;flex:none}
+  h3{font-size:17.5px;margin:24px 0 8px;font-weight:650}
+  p{margin:0 0 14px}
+  .lede{font-size:17.5px;color:var(--muted);line-height:1.6;margin-bottom:20px}
+  ul,ol{margin:0 0 14px;padding-left:24px}
+  li{margin-bottom:5px}
+  li::marker{color:var(--faint)}
+  .muted{color:var(--muted)}
+  .small{font-size:13.5px}
+
+  /* ---------- meta strip ---------- */
+  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
+  .meta .chip{display:inline-flex;gap:6px;align-items:baseline;font-size:13px;border:1px solid var(--border);border-radius:999px;padding:4px 12px;background:var(--bg-soft)}
+  .meta .chip b{font-weight:600}
+  .meta .chip span{color:var(--muted)}
+
+  /* ---------- callouts ---------- */
+  .callout{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;background:var(--bg-soft);padding:14px 16px;margin:0 0 18px}
+  .callout p:last-child{margin-bottom:0}
+  .callout.warn{border-left-color:var(--amber)}
+  .callout .ct{font-weight:650;font-size:14px;margin-bottom:4px;display:flex;gap:8px;align-items:center}
+  .callout.warn .ct{color:var(--amber)}
+
+  /* ---------- code blocks ---------- */
+  .codeblock{position:relative;margin:0 0 18px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
+  .codeblock .cb-head{display:flex;align-items:center;justify-content:space-between;background:var(--bg-soft);border-bottom:1px solid var(--border-soft);padding:6px 8px 6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .copybtn{font-family:var(--font);font-size:12.5px;font-weight:500;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 12px;cursor:pointer;color:var(--text);display:inline-flex;align-items:center;gap:6px;min-height:2rem}
+  .copybtn:hover{background:var(--bg-soft)}
+  .copybtn.done{color:var(--green);border-color:var(--green)}
+  .codeblock pre{margin:0;background:var(--bg-code);color:var(--code-text);padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.6}
+  .codeblock pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
+  .tok-k{color:#ff7b72}.tok-s{color:#a5d6ff}.tok-c{color:#8b949e;font-style:italic}.tok-f{color:#d2a8ff}.tok-n{color:#79c0ff}
+  @media (prefers-color-scheme: light){ .tok-k{color:#cf222e}.tok-s{color:#0a3069}.tok-c{color:#59636e}.tok-f{color:#8250df}.tok-n{color:#0550ae} }
+
+  /* ---------- tables ---------- */
+  .tblwrap{overflow-x:auto;margin:0 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
+  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
+  th{text-align:left;background:var(--bg-soft);font-weight:600;padding:9px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:9px 14px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+  tr:last-child td{border-bottom:none}
+  td code{white-space:nowrap}
+  .method{font-family:var(--mono);font-size:12px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap}
+  .m-post{background:var(--green-soft);color:var(--green)}
+  .m-get{background:var(--accent-soft);color:var(--accent-text)}
+
+  /* ---------- tree ---------- */
+  .tree{font-family:var(--mono);font-size:13.5px;line-height:1.75;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;overflow-x:auto;white-space:pre;margin:0 0 18px}
+  .tree .d{color:var(--accent-text);font-weight:600}
+  .tree .c{color:var(--faint)}
+
+  /* ---------- flow diagram ---------- */
+  .flow{display:flex;flex-direction:column;gap:0;margin:0 0 18px}
+  .flow .step{display:flex;gap:14px;align-items:flex-start}
+  .flow .rail{display:flex;flex-direction:column;align-items:center;flex:none;width:34px}
+  .flow .ball{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:14px;border:1px solid var(--border)}
+  .flow .line{width:2px;flex:1;min-height:18px;background:var(--border)}
+  .flow .step:last-child .line{display:none}
+  .flow .body{padding-bottom:20px;min-width:0}
+  .flow .body b{display:block;font-size:15.5px;margin-bottom:2px}
+  .flow .body p{margin:0;font-size:14.5px;color:var(--muted)}
+
+  /* ---------- steps (deploy / run) ---------- */
+  .steps{counter-reset:st;list-style:none;padding:0;margin:0 0 16px}
+  .steps li{counter-increment:st;position:relative;padding:0 0 16px 44px;margin:0}
+  .steps li::before{content:counter(st);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg-soft);font-family:var(--mono);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent-text)}
+  .steps li b{display:block;margin-bottom:2px}
+
+  footer{border-top:1px solid var(--border-soft);margin-top:44px;padding-top:18px;font-size:13.5px;color:var(--muted)}
+
+  /* ---------- mobile ---------- */
+  @media (max-width:900px){
+    .navtoggle{display:none}
+    .scrim{display:none}
+    .topbar{gap:8px;padding:10px 14px}
+    .topbar .ext span{display:none}
+    .topbar .badge{display:none}
+    .topbar .repo .path .docsuffix{display:none}
+    .layout{flex-direction:column}
+    aside{position:static;width:100%;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--border);padding:16px 16px 18px}
+    aside .group{margin:14px 2px 6px}
+    aside .group:first-child{margin-top:0}
+    aside nav{display:flex;flex-wrap:wrap;gap:6px}
+    aside nav a{border:1px solid var(--border);border-left:1px solid var(--border);border-radius:999px;padding:7px 14px;background:var(--bg-soft);min-height:2.25rem;align-items:center}
+    aside nav a.active{border-color:var(--accent)}
+    aside .side-note{margin:16px 2px 0}
+    main{padding:26px 18px 70px;width:100%}
+    h1{font-size:27px}
+    h2{font-size:21px}
+    table{min-width:0}
+    td code{white-space:normal;overflow-wrap:anywhere}
+    .tree{font-size:12px}
+    .codeblock pre{font-size:12.5px}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <button class="navtoggle" id="navToggle" aria-expanded="false" aria-controls="sidebar">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"/></svg>
+    সূচিপত্র
+  </button>
+  <div class="repo">
+    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25v3.25a.25.25 0 0 0 .4.2l1.45-1.087a.249.249 0 0 1 .3 0L8.6 15.7a.25.25 0 0 0 .4-.2v-3.25a.25.25 0 0 0-.25-.25h-3.5a.25.25 0 0 0-.25.25Z"/></svg>
+    <div class="path"><b>sohel622</b> <span>/</span> <b>bolt.new</b> <span class="docsuffix">· ব্যাকএন্ড ডকুমেন্টেশন</span></div>
+  </div>
+  <div class="spacer"></div>
+  <span class="badge"><span class="dot"></span> স্ন্যাপশট · <span style="font-family:var(--mono)">eda10b1</span></span>
+  <a class="ext" href="https://github.com/sohel622/bolt.new" target="_blank" rel="noopener">
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+    <span>GitHub-এ রিপো</span>
+  </a>
+</header>
+
+<div class="scrim" id="scrim"></div>
+
+<div class="layout">
+  <aside id="sidebar">
+    <div class="group">শুরু</div>
+    <nav>
+      <a href="#overview">পরিচিতি</a>
+      <a href="#architecture">আর্কিটেকচার</a>
+      <a href="#stack">টেক স্ট্যাক</a>
+      <a href="#structure">ফোল্ডার স্ট্রাকচার</a>
+    </nav>
+    <div class="group">সার্ভার সাইড</div>
+    <nav>
+      <a href="#api">API রুটসমূহ</a>
+      <a href="#llm">LLM লেয়ার ও স্ট্রিমিং</a>
+      <a href="#prompt">প্রম্পট সিস্টেম</a>
+      <a href="#webcontainer">WebContainer রানটাইম</a>
+    </nav>
+    <div class="group">চালানো ও ডেপ্লয়</div>
+    <nav>
+      <a href="#env">এনভায়রনমেন্ট ভেরিয়েবল</a>
+      <a href="#run">লোকালি চালানো</a>
+      <a href="#deploy">Cloudflare Pages-এ ডেপ্লয়</a>
+      <a href="#limits">সীমাবদ্ধতা ও নোট</a>
+    </nav>
+    <p class="side-note">এই ডকুমেন্টটি <b>sohel622/bolt.new</b> ফর্কের কোড পড়ে তৈরি — StackBlitz-এর ওপেন-সোর্স bolt.new-এর ১৭ ডিসেম্বর ২০২৪-এর স্ন্যাপশট (কমিট <span style="font-family:var(--mono)">eda10b1</span>)।</p>
+  </aside>
+
+  <main>
+    <!-- ============ OVERVIEW ============ -->
+    <section id="overview">
+      <h1>Bolt.new — ব্যাকএন্ড ডকুমেন্টেশন</h1>
+      <p class="lede">bolt.new ব্রাউজারেই প্রম্পট থেকে ফুল-স্ট্যাক ওয়েব অ্যাপ বানায়। এই পেজে শুধু এর <b>ব্যাক সাইড</b> — সার্ভার, API রুট, LLM স্ট্রিমিং আর রানটাইম — কীভাবে কাজ করে, তা ধাপে ধাপে সাজানো হলো।</p>
+      <div class="meta">
+        <span class="chip"><b>রিপো</b><span>sohel622/bolt.new (ফর্ক)</span></span>
+        <span class="chip"><b>আপস্ট্রিম</b><span>stackblitz/bolt.new</span></span>
+        <span class="chip"><b>স্ন্যাপশট</b><span>eda10b1 · ১৭ ডিসেম্বর ২০২৪</span></span>
+        <span class="chip"><b>ফ্রেমওয়ার্ক</b><span>Remix + Vite</span></span>
+        <span class="chip"><b>হোস্টিং</b><span>Cloudflare Pages</span></span>
+      </div>
+
+      <p>একটা সাধারণ ওয়েব অ্যাপের মতো এখানে আলাদা ডেটাবেস-সার্ভার বা REST ব্যাকএন্ড নেই। ব্যাকএন্ড বলতে এখানে মূলত তিনটি জিনিস:</p>
+      <ul>
+        <li><b>Remix সার্ভার রুট</b> — Cloudflare Pages-এ চলা সার্ভারলেস ফাংশন, যেগুলো ব্রাউজার থেকে রিকোয়েস্ট নেয়।</li>
+        <li><b>LLM লেয়ার</b> — <code>app/lib/.server/llm/</code>-এর ভেতরে থাকা কোড, যা AI প্রোভাইডারের (মূলত Anthropic Claude) কাছে প্রম্পট পাঠায় আর উত্তর <b>স্ট্রিম</b> করে ফেরত আনে। সার্ভার সাইডে থাকায় API key ব্রাউজারে ফাঁস হয় না।</li>
+        <li><b>WebContainer রানটাইম</b> — কোড চালানোর আসল ইঞ্জিন। এটি সার্ভারে নয়, <b>ব্যবহারকারীর ব্রাউজারের ভেতরেই</b> Node.js চালায়। ব্যাকএন্ডের কাজ এখানে শুধু সঠিক সিকিউরিটি হেডার পাঠানো, যাতে ব্রাউজার এই রানটাইম চালাতে পারে।</li>
+      </ul>
+
+      <div class="callout">
+        <p class="ct">মূল ধারণা</p>
+        <p>ব্যাকএন্ডের কাজ শুধু AI-এর সঙ্গে কথা বলা। ফাইল তৈরি, <code>npm install</code>, dev server চালানো, প্রিভিউ — সবই ঘটে ব্রাউজারের WebContainer-এ। তাই bolt.new-এর সার্ভার খরচ ও স্কেলিং অনেক হালকা।</p>
+      </div>
+    </section>
+
+    <!-- ============ ARCHITECTURE ============ -->
+    <section id="architecture">
+      <h2><span class="num">01</span> আর্কিটেকচার</h2>
+      <p>একজন ব্যবহারকারী প্রম্পট পাঠালে ডেটা যেভাবে ঘোরে:</p>
+      <div class="flow">
+        <div class="step"><div class="rail"><div class="ball">1</div><div class="line"></div></div>
+          <div class="body"><b>ব্রাউজার — চ্যাট UI</b><p>ব্যবহারকারী প্রম্পট লেখে। চ্যাট কম্পোনেন্ট (<code>app/components/chat/</code>) পুরো কথোপকথনের হিস্ট্রি সহ <code>POST /api/chat</code>-এ রিকোয়েস্ট পাঠায়।</p></div></div>
+        <div class="step"><div class="rail"><div class="ball">2</div><div class="line"></div></div>
+          <div class="body"><b>Remix সার্ভার রুট — <code>api.chat.ts</code></b><p>Cloudflare Pages ফাংশন রিকোয়েস্ট নেয়, সিস্টেম প্রম্পট জুড়ে দেয় এবং LLM লেয়ারকে কল করে।</p></div></div>
+        <div class="step"><div class="rail"><div class="ball">3</div><div class="line"></div></div>
+          <div class="body"><b>LLM লেয়ার — <code>lib/.server/llm/</code></b><p><code>getModel()</code> নির্বাচিত প্রোভাইডারের মডেল তৈরি করে, <code>streamText()</code> Vercel AI SDK দিয়ে মডেলের কাছে স্ট্রিমিং রিকোয়েস্ট পাঠায়। API key শুধু এখানেই, সার্ভারে থাকে।</p></div></div>
+        <div class="step"><div class="rail"><div class="ball">4</div><div class="line"></div></div>
+          <div class="body"><b>স্ট্রিমিং রেসপন্স</b><p>AI-এর উত্তর টুকরো টুকরো (data stream) ব্রাউজারে ফিরে আসে। উত্তরের ভেতরে থাকে বিশেষ <code>&lt;boltArtifact&gt;</code> ফরম্যাটে ফাইল ও কমান্ডের নির্দেশ।</p></div></div>
+        <div class="step"><div class="rail"><div class="ball">5</div><div class="line"></div></div>
+          <div class="body"><b>ব্রাউজার — মেসেজ পার্সার + Workbench</b><p><code>MessageParser</code> স্ট্রিম পড়ে artifact আলাদা করে; <code>ActionRunner</code> প্রতিটি নির্দেশ WebContainer-এ পাঠায় — ফাইল লেখে, প্যাকেজ ইনস্টল করে, কমান্ড চালায়।</p></div></div>
+        <div class="step"><div class="rail"><div class="ball">6</div></div>
+          <div class="body"><b>WebContainer — প্রিভিউ</b><p>ব্রাউজারের ভেতরের Node.js রানটাইমে dev server ওঠে, তার URL iframe প্রিভিউতে দেখায়। কোনো কোডই bolt-এর সার্ভারে রান হয় না।</p></div></div>
+      </div>
+      <div class="callout warn">
+        <p class="ct">লক্ষ্য করুন</p>
+        <p>এই স্ন্যাপশটে কোনো ডেটাবেস, লগইন/অথ সিস্টেম বা ফাইল স্টোরেজ সার্ভার নেই। চ্যাট হিস্ট্রি ব্রাউজারের <code>localStorage</code>-এ এবং প্রজেক্ট ফাইল WebContainer-এর ইন-মেমরি ফাইল সিস্টেমে থাকে।</p>
+      </div>
+    </section>
+
+    <!-- ============ STACK ============ -->
+    <section id="stack">
+      <h2><span class="num">02</span> টেক স্ট্যাক</h2>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>অংশ</th><th>প্রযুক্তি</th><th>ব্যাকএন্ডে ভূমিকা</th></tr></thead>
+          <tbody>
+            <tr><td><b>ফ্রেমওয়ার্ক</b></td><td>Remix (React 18) + Vite + TypeScript</td><td>সার্ভার রুট ও UI একই অ্যাপে; <code>.server</code> ফোল্ডারের কোড কখনো ব্রাউজারে যায় না</td></tr>
+            <tr><td><b>হোস্টিং</b></td><td>Cloudflare Pages + Wrangler</td><td>সার্ভার রুটগুলো এজ ফাংশন হিসেবে চলে; <code>@remix-run/cloudflare</code> অ্যাডাপ্টার</td></tr>
+            <tr><td><b>AI SDK</b></td><td>Vercel AI SDK (<code>ai</code> প্যাকেজ)</td><td><code>streamText</code> দিয়ে সব প্রোভাইডারের জন্য একই স্ট্রিমিং ইন্টারফেস</td></tr>
+            <tr><td><b>AI প্রোভাইডার</b></td><td>Anthropic Claude (ডিফল্ট), OpenAI, Google, xAI, DeepSeek, Mistral, Ollama, OpenRouter প্রভৃতি</td><td><code>getModel()</code> প্রোভাইডার অনুযায়ী মডেল বদলায়; key আসে এনভায়রনমেন্ট থেকে</td></tr>
+            <tr><td><b>রানটাইম</b></td><td>WebContainers (<code>@webcontainer/api</code>)</td><td>ব্রাউজারে Node.js; ব্যাকএন্ড শুধু COOP/COEP হেডার সরবরাহ করে</td></tr>
+            <tr><td><b>স্টেট</b></td><td>Nano Stores</td><td>Workbench, ফাইল ও টার্মিনালের স্টেট (ক্লায়েন্ট সাইড)</td></tr>
+            <tr><td><b>এডিটর / টার্মিনাল</b></td><td>CodeMirror 6, xterm.js</td><td>ক্লায়েন্ট সাইড; WebContainer-এর শেলের সঙ্গে যুক্ত</td></tr>
+            <tr><td><b>প্যাকেজ ম্যানেজার</b></td><td>pnpm · Node 18+</td><td>লোকাল ডেভেলপমেন্ট ও বিল্ডের জন্য</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- ============ STRUCTURE ============ -->
+    <section id="structure">
+      <h2><span class="num">03</span> ফোল্ডার স্ট্রাকচার</h2>
+      <p>রিপোর যেসব অংশ ব্যাকএন্ডের সঙ্গে সরাসরি জড়িত:</p>
+      <div class="tree"><span class="d">bolt.new/</span>
+├── <span class="d">app/</span>
+│   ├── <span class="d">routes/</span>
+│   │   ├── api.chat.ts          <span class="c"># মূল চ্যাট API — LLM স্ট্রিমিং</span>
+│   │   ├── api.enhancer.ts      <span class="c"># প্রম্পট উন্নত করার API</span>
+│   │   └── api.models.ts        <span class="c"># উপলব্ধ মডেলের তালিকা</span>
+│   ├── <span class="d">lib/</span>
+│   │   ├── <span class="d">.server/</span>               <span class="c"># শুধু সার্ভারে চলে, ব্রাউজারে যায় না</span>
+│   │   │   └── <span class="d">llm/</span>
+│   │   │       ├── model.ts         <span class="c"># প্রোভাইডার অনুযায়ী মডেল তৈরি</span>
+│   │   │       ├── prompts.ts       <span class="c"># সিস্টেম প্রম্পট</span>
+│   │   │       ├── stream-text.ts   <span class="c"># streamText() কল ও টোকেন সীমা</span>
+│   │   │       ├── constants.ts     <span class="c"># MAX_TOKENS ইত্যাদি</span>
+│   │   │       └── switchable-stream.ts
+│   │   ├── <span class="d">runtime/</span>           <span class="c"># ActionRunner — artifact নির্দেশ কার্যকর করে</span>
+│   │   ├── <span class="d">stores/</span>            <span class="c"># workbench, files, editor, terminal</span>
+│   │   └── <span class="d">webcontainer/</span>     <span class="c"># WebContainer বুট ও সিঙ্গলটন</span>
+│   ├── <span class="d">components/</span>          <span class="c"># chat, editor, workbench, sidebar (UI)</span>
+│   ├── entry.client.tsx
+│   └── entry.server.tsx        <span class="c"># সার্ভার রেন্ডারিং এন্ট্রি + হেডার</span>
+├── <span class="d">functions/</span>
+│   └── [[path]].ts             <span class="c"># Cloudflare Pages ফাংশন এন্ট্রি</span>
+├── wrangler.toml               <span class="c"># Cloudflare কনফিগ ও বাইন্ডিং</span>
+├── vite.config.ts              <span class="c"># Cloudflare + Remix প্লাগইন</span>
+└── .env.example                <span class="c"># দরকারি API key-এর তালিকা</span></div>
+      <p class="small muted">Remix-এর নিয়ম: <code>.server</code> নামের ফোল্ডার/ফাইলের কোড বিল্ডের সময় ক্লায়েন্ট বান্ডল থেকে বাদ পড়ে — তাই API key ব্যবহারকারী কোড নিরাপদে এখানে রাখা যায়।</p>
+    </section>
+
+    <!-- ============ API ============ -->
+    <section id="api">
+      <h2><span class="num">04</span> API রুটসমূহ</h2>
+      <p>সার্ভার সাইডে মোটা দাগে তিনটি API রুট আছে। সবগুলোই <code>app/routes/</code>-এ Remix resource route হিসেবে লেখা।</p>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>রুট</th><th>মেথড</th><th>কাজ</th><th>রেসপন্স</th></tr></thead>
+          <tbody>
+            <tr><td><code>/api/chat</code></td><td><span class="method m-post">POST</span></td><td>চ্যাট মেসেজ নিয়ে সিস্টেম প্রম্পটসহ LLM-এ পাঠায়; মূল জেনারেশন এখানেই হয়</td><td>স্ট্রিমিং (AI SDK data stream)</td></tr>
+            <tr><td><code>/api/enhancer</code></td><td><span class="method m-post">POST</span></td><td>ব্যবহারকারীর ছোট/অস্পষ্ট প্রম্পটকে LLM দিয়ে বিস্তারিত প্রম্পটে সাজিয়ে দেয়</td><td>স্ট্রিমিং টেক্সট</td></tr>
+            <tr><td><code>/api/models</code></td><td><span class="method m-get">GET</span></td><td>কোন কোন প্রোভাইডারের API key সেট করা আছে, সেই অনুযায়ী ব্যবহারযোগ্য মডেলের তালিকা দেয়</td><td>JSON</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3><code>/api/chat</code> — মূল ফ্লো</h3>
+      <p>রুটটির সার্ভার ফাংশন (<code>action</code>) ধাপে ধাপে:</p>
+      <ol>
+        <li>রিকোয়েস্ট বডি থেকে <code>messages</code> অ্যারে পড়ে।</li>
+        <li><code>streamText()</code>-কে (LLM লেয়ার) কল করে — সঙ্গে সিস্টেম প্রম্পট ও আগের সব মেসেজ।</li>
+        <li>AI SDK-এর <code>toDataStream()</code> দিয়ে ফলাফলকে স্ট্রিমিং রেসপন্সে পরিণত করে ব্রাউজারে পাঠায়।</li>
+        <li>স্ট্রিম চলাকালীন টোকেন ব্যবহার গোনা হয়; সীমা (<code>MAX_RESPONSE_SEGMENTS</code>) পার হলে ধারাবাহিকতা বজায় রাখতে <code>SwitchableStream</code> দিয়ে নতুন সেগমেন্ট শুরু হয়।</li>
+      </ol>
+      <div class="codeblock">
+        <div class="cb-head"><span>app/routes/api.chat.ts — সরলীকৃত রূপ</span><button class="copybtn" data-copy="c1">কপি</button></div>
+        <pre id="c1"><code><span class="tok-k">import</span> { type ActionFunctionArgs } <span class="tok-k">from</span> <span class="tok-s">'@remix-run/cloudflare'</span>;
+<span class="tok-k">import</span> { streamText } <span class="tok-k">from</span> <span class="tok-s">'~/lib/.server/llm/stream-text'</span>;
+
+<span class="tok-k">export async function</span> <span class="tok-f">action</span>({ context, request }: ActionFunctionArgs) {
+  <span class="tok-k">const</span> { messages } = <span class="tok-k">await</span> request.<span class="tok-f">json</span>();
+
+  <span class="tok-k">const</span> result = <span class="tok-k">await</span> <span class="tok-f">streamText</span>({
+    messages,
+    env: context.cloudflare.env,   <span class="tok-c">// API key এখান থেকে আসে</span>
+  });
+
+  <span class="tok-k">return</span> result.<span class="tok-f">toDataStream</span>();  <span class="tok-c">// স্ট্রিমিং রেসপন্স</span>
+}</code></pre>
+      </div>
+      <p class="small muted">উপরের কোডটি বোঝার সুবিধার জন্য সরলীকৃত — আসল ফাইলে এরর হ্যান্ডলিং, টোকেন কাউন্টিং ও সেগমেন্ট বদলের যুক্তি আরও আছে।</p>
+    </section>
+
+    <!-- ============ LLM ============ -->
+    <section id="llm">
+      <h2><span class="num">05</span> LLM লেয়ার ও স্ট্রিমিং</h2>
+      <p>LLM লেয়ার থাকে <code>app/lib/.server/llm/</code>-তে। এর কাজ: কোন প্রোভাইডার/মডেল ব্যবহার হবে তা ঠিক করা, সিস্টেম প্রম্পট জোড়া, আর উত্তরের স্ট্রিম সাজানো।</p>
+
+      <h3>মডেল নির্বাচন — <code>model.ts</code></h3>
+      <p><code>getModel(provider, model, env)</code> ফাংশনটি প্রোভাইডারের নাম অনুযায়ী সংশ্লিষ্ট AI SDK প্রোভাইডার প্যাকেজ দিয়ে মডেল ইনস্ট্যান্স বানায়। প্রতিটি প্রোভাইডারের API key এনভায়রনমেন্ট ভেরিয়েবল থেকে পড়া হয় — কোনো key কোডে হার্ডকোড করা নেই। ডিফল্ট প্রোভাইডার Anthropic।</p>
+
+      <h3>স্ট্রিমিং — <code>stream-text.ts</code></h3>
+      <ul>
+        <li>Vercel AI SDK-এর <code>streamText()</code> ব্যবহার করে; <code>maxTokens</code> সীমা <code>constants.ts</code>-এর <code>MAX_TOKENS</code> থেকে আসে।</li>
+        <li>মেসেজগুলো পাঠানোর আগে প্রসেস করা হয় — আগের উত্তরের artifact অংশ কেটে ছোট করা হয়, যাতে কনটেক্সট উইন্ডো ভরে না যায়।</li>
+        <li><code>onFinish</code> কলব্যাকে মোট টোকেন ব্যবহার হিসাব হয়।</li>
+      </ul>
+
+      <div class="codeblock">
+        <div class="cb-head"><span>app/lib/.server/llm/stream-text.ts — মূল অংশ (সরলীকৃত)</span><button class="copybtn" data-copy="c2">কপি</button></div>
+        <pre id="c2"><code><span class="tok-k">import</span> { streamText <span class="tok-k">as</span> _streamText } <span class="tok-k">from</span> <span class="tok-s">'ai'</span>;
+<span class="tok-k">import</span> { getModel } <span class="tok-k">from</span> <span class="tok-s">'~/lib/.server/llm/model'</span>;
+<span class="tok-k">import</span> { getSystemPrompt } <span class="tok-k">from</span> <span class="tok-s">'~/lib/.server/llm/prompts'</span>;
+<span class="tok-k">import</span> { MAX_TOKENS } <span class="tok-k">from</span> <span class="tok-s">'./constants'</span>;
+
+<span class="tok-k">export function</span> <span class="tok-f">streamText</span>({ messages, env, model, provider }) {
+  <span class="tok-k">return</span> <span class="tok-f">_streamText</span>({
+    model: <span class="tok-f">getModel</span>(provider, model, env),
+    system: <span class="tok-f">getSystemPrompt</span>(),
+    maxTokens: MAX_TOKENS,
+    messages: <span class="tok-f">convertToCoreMessages</span>(messages),
+  });
+}</code></pre>
+      </div>
+
+      <h3>কেন স্ট্রিমিং?</h3>
+      <p>পুরো উত্তর শেষ হওয়া পর্যন্ত অপেক্ষা না করে টোকেন আসামাত্রই ব্রাউজারে পাঠানো হয়। ফলে ব্যবহারকারী সঙ্গে সঙ্গে লেখা দেখতে পায়, আর <code>MessageParser</code> স্ট্রিমের মাঝখানেই ফাইল তৈরির নির্দেশ পেলে সঙ্গে সঙ্গে WebContainer-এ কাজ শুরু হয়ে যায় — পুরো অভিজ্ঞতাটাই দ্রুত মনে হয়।</p>
+    </section>
+
+    <!-- ============ PROMPT ============ -->
+    <section id="prompt">
+      <h2><span class="num">06</span> প্রম্পট সিস্টেম</h2>
+      <p>সিস্টেম প্রম্পট থাকে <code>app/lib/.server/llm/prompts.ts</code>-এর <code>getSystemPrompt()</code>-এ। এটি মডেলকে শেখায়: WebContainer-এর সীমাবদ্ধতা (কোন কমান্ড চলবে, কোনটা চলবে না), কোন স্ট্যাকে কোড লিখতে হবে, এবং সবচেয়ে গুরুত্বপূর্ণ — উত্তর কোন ফরম্যাটে দিতে হবে।</p>
+      <p>মডেলের প্রতিটি কাজের নির্দেশ আসে <b>artifact</b> ফরম্যাটে:</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>মডেলের উত্তরের artifact ফরম্যাট</span><button class="copybtn" data-copy="c3">কপি</button></div>
+        <pre id="c3"><code>&lt;boltArtifact id="todo-app" title="Todo App"&gt;
+  &lt;boltAction type="file" filePath="src/App.tsx"&gt;
+    // এখানে ফাইলের পুরো কনটেন্ট
+  &lt;/boltAction&gt;
+  &lt;boltAction type="shell"&gt;
+    npm install
+  &lt;/boltAction&gt;
+  &lt;boltAction type="start"&gt;
+    npm run dev
+  &lt;/boltAction&gt;
+&lt;/boltArtifact&gt;</code></pre>
+      </div>
+      <div class="tblwrap">
+        <table>
+          <thead><tr><th>Action type</th><th>অর্থ</th><th>কে কার্যকর করে</th></tr></thead>
+          <tbody>
+            <tr><td><code>file</code></td><td>নির্দিষ্ট পাথে ফাইল তৈরি/আপডেট</td><td>ActionRunner → WebContainer FS</td></tr>
+            <tr><td><code>shell</code></td><td>টার্মিনালে কমান্ড চালানো (যেমন <code>npm install</code>)</td><td>ActionRunner → WebContainer শেল</td></tr>
+            <tr><td><code>start</code></td><td>dev server চালু করা (দীর্ঘমেয়াদি প্রসেস)</td><td>ActionRunner → WebContainer শেল</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>ব্রাউজারের <code>app/lib/runtime/message-parser.ts</code> স্ট্রিম পড়তে পড়তে এই ট্যাগগুলো আলাদা করে, আর <code>app/lib/runtime/action-runner.ts</code> প্রতিটি action WebContainer-এ চালায়। অর্থাৎ প্রম্পটের ফরম্যাটই হলো ব্যাকএন্ড ও রানটাইমের মধ্যে চুক্তি (contract)।</p>
+    </section>
+
+    <!-- ============ WEBCONTAINER ============ -->
+    <section id="webcontainer">
+      <h2><span class="num">07</span> WebContainer রানটাইম</h2>
+      <p>WebContainer হলো StackBlitz-এর প্রযুক্তি — ব্রাউজারের ভেতরে চলা একটি মাইক্রো-OS/Node.js রানটাইম। bolt.new-এ:</p>
+      <ul>
+        <li><code>app/lib/webcontainer/index.ts</code> অ্যাপ লোডের সময় একবারই (singleton) <code>WebContainer.boot()</code> করে।</li>
+        <li>ফাইল সিস্টেম, শেল প্রসেস, <code>npm install</code>, dev server — সব এই রানটাইমের ভেতরে।</li>
+        <li>dev server চালু হলে <code>server-ready</code> ইভেন্টে URL পাওয়া যায়, সেটাই প্রিভিউ iframe-এ বসে।</li>
+      </ul>
+      <h3>ব্যাকএন্ডের ভূমিকা: COOP/COEP হেডার</h3>
+      <p>WebContainer-এর জন্য ব্রাউজারে <code>SharedArrayBuffer</code> দরকার, আর তার শর্ত হলো পেজটিকে cross-origin isolated হতে হবে। তাই সার্ভার প্রতিটি রেসপন্সে এই দুটি হেডার পাঠায় (সার্ভার এন্ট্রি / কনফিগে সেট করা):</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>রেসপন্স হেডার</span><button class="copybtn" data-copy="c4">কপি</button></div>
+        <pre id="c4"><code>Cross-Origin-Embedder-Policy: require-corp
+Cross-Origin-Opener-Policy: same-origin</code></pre>
+      </div>
+      <p>এই হেডার না থাকলে WebContainer বুট হবে না — এটাই এই প্রজেক্টে ফ্রন্টএন্ড ও ব্যাকএন্ডের সবচেয়ে গুরুত্বপূর্ণ সংযোগবিন্দুগুলোর একটি।</p>
+    </section>
+
+    <!-- ============ ENV ============ -->
+    <section id="env">
+      <h2><span class="num">08</span> এনভায়রনমেন্ট ভেরিয়েবল</h2>
+      <p>API key কখনো কোডে লেখা হয় না। লোকালে <code>.env.local</code> ফাইলে, আর Cloudflare-এ Pages-এর environment settings / <code>wrangler.toml</code>-এর vars-এ রাখা হয়। অন্তত একটি প্রোভাইডারের key থাকলেই অ্যাপ চলবে।</p>
+      <div class="codeblock">
+        <div class="cb-head"><span>.env.local — নমুনা</span><button class="copybtn" data-copy="c5">কপি</button></div>
+        <pre id="c5"><code><span class="tok-c"># মূল প্রোভাইডার (ডিফল্ট)</span>
+ANTHROPIC_API_KEY=sk-ant-...
+
+<span class="tok-c"># ঐচ্ছিক — অন্য প্রোভাইডার চালু করতে</span>
+OPENAI_API_KEY=sk-...
+GOOGLE_GENERATIVE_AI_API_KEY=...
+GROQ_API_KEY=...
+OPEN_ROUTER_API_KEY=...
+DEEPSEEK_API_KEY=...
+MISTRAL_API_KEY=...
+XAI_API_KEY=...
+
+<span class="tok-c"># লোকাল মডেল (Ollama) ব্যবহার করলে</span>
+OLLAMA_API_BASE_URL=http://localhost:11434
+
+<span class="tok-c"># ডিফল্ট মডেল বদলাতে চাইলে</span>
+DEFAULT_MODEL=claude-3-5-sonnet-latest
+DEFAULT_PROVIDER=Anthropic</code></pre>
+      </div>
+      <div class="callout warn">
+        <p class="ct">নিরাপত্তা</p>
+        <p><code>.env.local</code> কখনো GitHub-এ পুশ করবেন না — এটি <code>.gitignore</code>-এ থাকে। key একবার পাবলিক হয়ে গেলে তা বাতিল (revoke) করে নতুন key বানাতে হয়; ফাইল থেকে মুছে ফেললেও git history-তে থেকে যায়।</p>
+      </div>
+    </section>
+
+    <!-- ============ RUN ============ -->
+    <section id="run">
+      <h2><span class="num">09</span> লোকালি চালানো</h2>
+      <p>শর্ত: Node.js 18+ এবং pnpm ইনস্টল থাকতে হবে। এটি ডেস্কটপ/ল্যাপটপের জন্য — ফোনে সরাসরি চালানো যাবে না।</p>
+      <ol class="steps">
+        <li><b>রিপো ক্লোন করুন</b>
+          <div class="codeblock" style="margin-top:8px"><div class="cb-head"><span>Terminal</span><button class="copybtn" data-copy="c6">কপি</button></div>
+          <pre id="c6"><code>git clone https://github.com/sohel622/bolt.new.git
+cd bolt.new</code></pre></div></li>
+        <li><b>ডিপেন্ডেন্সি ইনস্টল করুন</b>
+          <div class="codeblock" style="margin-top:8px"><div class="cb-head"><span>Terminal</span><button class="copybtn" data-copy="c7">কপি</button></div>
+          <pre id="c7"><code>pnpm install</code></pre></div></li>
+        <li><b>API key বসান</b><span class="muted"><code>.env.example</code> কপি করে <code>.env.local</code> বানিয়ে অন্তত <code>ANTHROPIC_API_KEY</code> বসান (আগের অংশ দেখুন)।</span></li>
+        <li><b>Dev server চালু করুন</b>
+          <div class="codeblock" style="margin-top:8px"><div class="cb-head"><span>Terminal</span><button class="copybtn" data-copy="c8">কপি</button></div>
+          <pre id="c8"><code>pnpm run dev</code></pre></div>
+          <span class="muted">ব্রাউজারে <code>http://localhost:5173</code> খুলুন। WebContainer-এর জন্য Chrome/Edge-এর মতো Chromium ব্রাউজার সবচেয়ে নির্ভরযোগ্য।</span></li>
+      </ol>
+    </section>
+
+    <!-- ============ DEPLOY ============ -->
+    <section id="deploy">
+      <h2><span class="num">10</span> Cloudflare Pages-এ ডেপ্লয়</h2>
+      <p>এই প্রজেক্টের অফিসিয়াল হোস্টিং Cloudflare Pages — Remix অ্যাপটি সেখানকার ফাংশন হিসেবে চলে।</p>
+      <ol class="steps">
+        <li><b>বিল্ড যাচাই করুন</b><span class="muted"><code>pnpm run build</code> চালিয়ে দেখুন বিল্ড সফল হয় কিনা।</span></li>
+        <li><b>Wrangler দিয়ে ডেপ্লয়</b>
+          <div class="codeblock" style="margin-top:8px"><div class="cb-head"><span>Terminal</span><button class="copybtn" data-copy="c9">কপি</button></div>
+          <pre id="c9"><code>pnpm run deploy</code></pre></div>
+          <span class="muted">ভেতরে <code>wrangler pages deploy</code> চলে; প্রথমবার Cloudflare অ্যাকাউন্টে লগইন চাইবে।</span></li>
+        <li><b>প্রোডাকশন key সেট করুন</b><span class="muted">Cloudflare Dashboard → Pages → প্রজেক্ট → Settings → Environment variables-এ API key গুলো যোগ করুন, তারপর প্রয়োজনে আবার ডেপ্লয় দিন।</span></li>
+      </ol>
+      <div class="callout">
+        <p class="ct">GitHub Pages সম্পর্কে</p>
+        <p>এই ডকুমেন্ট পেজটি নিজে একটি স্ট্যাটিক পেজ — GitHub Pages-এ এমন স্ট্যাটিক ডকুমেন্ট সহজেই হোস্ট করা যায়। কিন্তু <b>bolt.new অ্যাপটি নিজে GitHub Pages-এ চলবে না</b>, কারণ GitHub Pages শুধু স্ট্যাটিক ফাইল দেয় — Remix সার্ভার রুট (<code>/api/chat</code>) চালানোর কোনো সার্ভার সেখানে নেই। অ্যাপের জন্য Cloudflare Pages-ই লাগবে।</p>
+      </div>
+    </section>
+
+    <!-- ============ LIMITS ============ -->
+    <section id="limits">
+      <h2><span class="num">11</span> সীমাবদ্ধতা ও নোট</h2>
+      <ul>
+        <li><b>পুরনো স্ন্যাপশট:</b> এই ফর্কটি ১৭ ডিসেম্বর ২০২৪-এর কোডে থেমে আছে (<code>eda10b1</code>)। বর্তমান bolt.new-এর সঙ্গে এর অনেক পার্থক্য থাকতে পারে; ফর্কে Sohel-এর নিজের কোনো কমিট নেই — সব আপস্ট্রিমের।</li>
+        <li><b>কোনো ডেটাবেস/অথ নেই:</b> এই সংস্করণে সার্ভার-সাইড persistence, ইউজার অ্যাকাউন্ট বা পেমেন্টের ব্যবস্থা নেই।</li>
+        <li><b>API key বাধ্যতামূলক:</b> অন্তত একটি AI প্রোভাইডারের key ছাড়া চ্যাট কাজ করবে না; ব্যবহার বাড়লে প্রোভাইডারের বিলও বাড়বে।</li>
+        <li><b>ব্রাউজার নির্ভরতা:</b> WebContainer-এর জন্য cross-origin isolation ও আধুনিক Chromium ব্রাউজার সবচেয়ে ভালো কাজ করে।</li>
+        <li><b>যাচাইয়ের অবস্থা:</b> এই ডকুমেন্ট GitHub থেকে কোড পড়ে তৈরি করা হয়েছে; প্রজেক্টটি লোকালি বিল্ড করে যাচাই করা হয়নি।</li>
+      </ul>
+      <footer>
+        <p>সোর্স: <a href="https://github.com/sohel622/bolt.new" target="_blank" rel="noopener">github.com/sohel622/bolt.new</a> · আপস্ট্রিম: <a href="https://github.com/stackblitz/bolt.new" target="_blank" rel="noopener">stackblitz/bolt.new</a> · স্ন্যাপশট কমিট <span style="font-family:var(--mono)">eda10b1</span> (১৭ ডিসেম্বর ২০২৪)</p>
+      </footer>
+    </section>
+  </main>
+</div>
+
+<script>
+  // Copy buttons
+  document.querySelectorAll('.copybtn').forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var target = document.getElementById(btn.getAttribute('data-copy'));
+      if (!target) return;
+      var text = target.innerText;
+      function done() {
+        var old = btn.textContent;
+        btn.textContent = 'কপি হয়েছে ✓';
+        btn.classList.add('done');
+        setTimeout(function () { btn.textContent = old; btn.classList.remove('done'); }, 1600);
+      }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(function () { fallback(); });
+      } else { fallback(); }
+      function fallback() {
+        var ta = document.createElement('textarea');
+        ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+        document.body.appendChild(ta); ta.select();
+        try { document.execCommand('copy'); done(); } catch (e) {}
+        document.body.removeChild(ta);
+      }
+    });
+  });
+
+  // Mobile sidebar
+  var sidebar = document.getElementById('sidebar');
+  var toggle = document.getElementById('navToggle');
+  var scrim = document.getElementById('scrim');
+  function setNav(open) {
+    sidebar.classList.toggle('open', open);
+    scrim.classList.toggle('on', open);
+    toggle.setAttribute('aria-expanded', open ? 'true' : 'false');
+  }
+  toggle.addEventListener('click', function () { setNav(!sidebar.classList.contains('open')); });
+  scrim.addEventListener('click', function () { setNav(false); });
+  sidebar.querySelectorAll('a').forEach(function (a) {
+    a.addEventListener('click', function () { if (window.innerWidth <= 900) setNav(false); });
+  });
+
+  // Scroll spy
+  var links = Array.prototype.slice.call(sidebar.querySelectorAll('nav a'));
+  var map = {};
+  links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  if ('IntersectionObserver' in window) {
+    var obs = new IntersectionObserver(function (entries) {
+      entries.forEach(function (e) {
+        if (e.isIntersecting) {
+          links.forEach(function (a) { a.classList.remove('active'); });
+          var a = map[e.target.id];
+          if (a) a.classList.add('active');
+        }
+      });
+    }, { rootMargin: '-20% 0px -70% 0px' });
+    document.querySelectorAll('main section[id]').forEach(function (s) { obs.observe(s); });
+  }
+</script>
+</body>
+</html>
