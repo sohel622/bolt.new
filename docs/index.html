@@ -6,178 +6,239 @@
 <meta name="color-scheme" content="light dark" />
 <link rel="icon" href="data:," />
 <title>Bolt.new Backend Documentation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
   :root{
-    --bg:#ffffff; --bg-soft:#f6f8fa; --bg-code:#0d1117; --code-text:#e6edf3;
-    --text:#1f2328; --muted:#59636e; --faint:#818c98;
-    --border:#d1d9e0; --border-soft:#e3e8ee;
-    --accent:#0969da; --accent-soft:#ddf4ff; --accent-text:#0550ae;
-    --green:#1a7f37; --green-soft:#dafbe1;
-    --amber:#9a6700; --amber-soft:#fff8c5;
-    --red:#cf222e;
-    --sidebar-w:288px;
-    --radius:8px;
-    --font:-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali","Hind Siliguri",Helvetica,Arial,sans-serif;
-    --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,"Liberation Mono",monospace;
+    --bg:#f7f7f4; --surface:#ffffff; --surface-2:#eef1ec;
+    --ink:#141a16; --muted:#4d5a52; --faint:#7c8a81;
+    --border:#d8ded6; --border-soft:#e6eae3;
+    --accent:#0b6b4f; --accent-strong:#084c38; --accent-soft:#dff2e8; --accent-text:#07503a;
+    --amber:#8a5a00; --amber-soft:#fdf0cd; --amber-line:#d9a514;
+    --dark:#0c1210; --dark-2:#131c18; --dark-line:#243129;
+    --code-bg:#0c1210; --code-text:#d9e6dd;
+    --green:#0b6b4f; --green-soft:#dff2e8;
+    --sidebar-w:292px; --radius:10px;
+    --font:"Hind Siliguri",-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans Bengali",Helvetica,Arial,sans-serif;
+    --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
   }
   @media (prefers-color-scheme: dark){
     :root{
-      --bg:#0d1117; --bg-soft:#161b22; --bg-code:#010409; --code-text:#e6edf3;
-      --text:#e6edf3; --muted:#9198a1; --faint:#6e7681;
-      --border:#30363d; --border-soft:#21262d;
-      --accent:#4493f8; --accent-soft:#122a4a; --accent-text:#79b8ff;
-      --green:#3fb950; --green-soft:#12261a;
-      --amber:#d29922; --amber-soft:#2b2103;
-      --red:#f85149;
+      --bg:#0a0e0c; --surface:#121814; --surface-2:#18211b;
+      --ink:#e8efe9; --muted:#a7b5ab; --faint:#77867c;
+      --border:#2a352d; --border-soft:#1e2821;
+      --accent:#3ecf9a; --accent-strong:#3ecf9a; --accent-soft:#10382a; --accent-text:#7fe3bb;
+      --amber:#e8bc45; --amber-soft:#33270a; --amber-line:#8a6d1c;
+      --dark:#060908; --dark-2:#0d130f; --dark-line:#223028;
+      --code-bg:#060908; --code-text:#d9e6dd;
+      --green:#3ecf9a; --green-soft:#10382a;
     }
   }
   *{box-sizing:border-box}
   html{scroll-behavior:smooth}
-  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} }
-  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--text);font-size:16px;line-height:1.65;-webkit-font-smoothing:antialiased}
+  @media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto} *{transition:none!important} }
+  body{margin:0;font-family:var(--font);background:var(--bg);color:var(--ink);font-size:16.5px;line-height:1.7;-webkit-font-smoothing:antialiased;overflow-x:hidden}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
-  code{font-family:var(--mono);font-size:.86em;background:var(--bg-soft);border:1px solid var(--border-soft);border-radius:5px;padding:.12em .38em}
+  code{font-family:var(--mono);font-size:.84em;background:var(--surface-2);border:1px solid var(--border-soft);border-radius:5px;padding:.1em .36em;overflow-wrap:anywhere}
   button,[role="button"],summary,select,input:not([type="checkbox"]){min-height:2.25rem}
+  ::selection{background:var(--accent-soft)}
+
+  /* ---------- reading progress ---------- */
+  #progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--accent);z-index:200}
 
   /* ---------- top bar ---------- */
-  .topbar{position:sticky;top:0;z-index:60;display:flex;align-items:center;gap:14px;padding:10px 20px;background:var(--bg);border-bottom:1px solid var(--border)}
-  .topbar .repo{display:flex;align-items:center;gap:10px;min-width:0}
-  .topbar .repo svg{flex:none;color:var(--muted)}
-  .topbar .repo .path{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-  .topbar .repo .path b{font-weight:600}
-  .topbar .repo .path span{color:var(--muted)}
-  .badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;border:1px solid var(--border);border-radius:999px;padding:2px 10px;color:var(--muted);white-space:nowrap}
-  .badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green)}
+  .topbar{position:sticky;top:0;z-index:80;display:flex;align-items:center;gap:12px;padding:10px 18px;background:var(--dark);color:#e8efe9;border-bottom:1px solid var(--dark-line)}
+  .topbar .mark{width:30px;height:30px;flex:none;border-radius:7px;background:#e8efe9;color:#0c1210;display:flex;align-items:center;justify-content:center}
+  .topbar .repo{min-width:0}
+  .topbar .repo .path{font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#e8efe9}
+  .topbar .repo .path b{font-weight:700}
+  .topbar .repo .path span{color:#8fa398}
+  .badge{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;border:1px solid var(--dark-line);border-radius:999px;padding:3px 11px;color:#b9c8be;white-space:nowrap;background:var(--dark-2)}
+  .badge .dot{width:7px;height:7px;border-radius:50%;background:#3ecf9a}
+  .badge .mono{font-family:var(--mono);font-size:12px}
   .topbar .spacer{flex:1}
-  .topbar .ext{font-size:14px;font-weight:500;padding:6px 10px;border:1px solid var(--border);border-radius:var(--radius);color:var(--text);display:inline-flex;align-items:center;gap:6px}
-  .topbar .ext:hover{text-decoration:none;background:var(--bg-soft)}
-  .navtoggle{display:none;align-items:center;gap:8px;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:6px 12px;font:inherit;font-size:14px;color:var(--text);cursor:pointer}
+  .topbar .ext{font-size:14px;font-weight:600;padding:6px 12px;border:1px solid #3a4a40;border-radius:8px;color:#e8efe9;display:inline-flex;align-items:center;gap:7px;background:transparent}
+  .topbar .ext:hover{text-decoration:none;background:var(--dark-2)}
+  .navtoggle{display:none;align-items:center;gap:8px;background:var(--dark-2);border:1px solid var(--dark-line);border-radius:8px;padding:6px 12px;font:inherit;font-size:14px;color:#e8efe9;cursor:pointer}
 
   /* ---------- layout ---------- */
-  .layout{display:flex;align-items:flex-start;max-width:1440px;margin:0 auto}
-  aside{width:var(--sidebar-w);flex:none;position:sticky;top:57px;height:calc(100vh - 57px);overflow-y:auto;padding:22px 14px 40px 20px;border-right:1px solid var(--border-soft)}
-  aside .group{font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;color:var(--faint);margin:20px 8px 6px}
-  aside .group:first-child{margin-top:0}
-  aside nav a{display:flex;align-items:center;gap:8px;padding:6px 10px;border-radius:6px;color:var(--text);font-size:14.5px;line-height:1.4;border-left:2px solid transparent}
-  aside nav a:hover{text-decoration:none;background:var(--bg-soft)}
-  aside nav a.active{background:var(--accent-soft);color:var(--accent-text);font-weight:600;border-left-color:var(--accent)}
-  aside .side-note{margin:22px 8px 0;font-size:13px;color:var(--muted);border-top:1px solid var(--border-soft);padding-top:14px}
-  main{flex:1;min-width:0;padding:34px 44px 90px;max-width:920px}
-  section{scroll-margin-top:76px;padding-bottom:14px}
-  section + section{border-top:1px solid var(--border-soft);padding-top:30px;margin-top:26px}
+  .layout{display:flex;align-items:flex-start;max-width:1460px;margin:0 auto;width:100%}
+  aside{width:var(--sidebar-w);flex:none;position:sticky;top:55px;height:calc(100vh - 55px);overflow-y:auto;padding:20px 14px 36px 18px;border-right:1px solid var(--border);background:var(--surface)}
+  aside .group{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--faint);margin:22px 8px 7px}
+  aside .group:first-of-type{margin-top:14px}
+  aside nav a{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:7px;color:var(--ink);font-size:15px;line-height:1.4;border-left:3px solid transparent}
+  aside nav a:hover{text-decoration:none;background:var(--surface-2)}
+  aside nav a.active{background:var(--accent-soft);color:var(--accent-text);font-weight:700;border-left-color:var(--accent)}
+  aside nav a.hidden-by-search{display:none}
+  aside .side-note{margin:22px 8px 0;font-size:13.5px;color:var(--muted);border-top:1px solid var(--border-soft);padding-top:14px;line-height:1.6}
+  .searchbox{position:relative}
+  .searchbox svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);color:var(--faint);pointer-events:none}
+  .searchbox input{width:100%;font:inherit;font-size:14.5px;padding:8px 34px 8px 34px;border:1px solid var(--border);border-radius:8px;background:var(--bg);color:var(--ink)}
+  .searchbox input:focus{outline:2px solid var(--accent);outline-offset:1px}
+  .searchbox .clear{position:absolute;right:4px;top:50%;transform:translateY(-50%);border:none;background:none;cursor:pointer;color:var(--faint);font-size:16px;line-height:1;padding:6px 8px;display:none;min-height:0}
+  .search-status{font-size:13px;color:var(--muted);margin:8px 8px 0;display:none}
+  main{flex:1;min-width:0;padding:0 44px 90px;max-width:960px;width:100%}
+  section{scroll-margin-top:74px;padding:34px 0 8px}
+  section.hidden-by-search{display:none}
+  section + section{border-top:1px solid var(--border)}
+  .noresults{display:none;border:1px dashed var(--border);border-radius:var(--radius);padding:22px;text-align:center;color:var(--muted);margin-top:26px;background:var(--surface)}
+  .noresults.on{display:block}
+
+  /* ---------- hero ---------- */
+  .hero{margin:26px -44px 0;padding:38px 44px 34px;background:var(--dark);color:#e8efe9;border-radius:0 0 14px 14px;background-image:linear-gradient(var(--dark-line) 1px,transparent 1px),linear-gradient(90deg,var(--dark-line) 1px,transparent 1px);background-size:34px 34px}
+  .hero .kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--mono);font-size:12.5px;color:#7fe3bb;border:1px solid var(--dark-line);background:var(--dark-2);border-radius:999px;padding:4px 12px;margin-bottom:16px}
+  .hero .kicker .dot{width:7px;height:7px;border-radius:50%;background:#3ecf9a}
+  h1{font-size:36px;line-height:1.25;margin:0 0 12px;font-weight:700;letter-spacing:-.01em;color:#f2f7f3}
+  .lede{font-size:18px;color:#b9c8be;line-height:1.65;margin:0 0 22px;max-width:640px}
+  .lede b{color:#f2f7f3}
+  .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:0 0 22px}
+  .stat{background:var(--dark-2);border:1px solid var(--dark-line);border-radius:10px;padding:13px 14px;min-width:0}
+  .stat .v{font-family:var(--mono);font-weight:700;font-size:16px;color:#f2f7f3;overflow-wrap:anywhere}
+  .stat .k{font-size:12.5px;color:#8fa398;margin-top:2px}
+  .terminal{background:#060908;border:1px solid var(--dark-line);border-radius:10px;overflow:hidden;text-align:left}
+  .terminal .t-head{display:flex;align-items:center;gap:7px;padding:9px 13px;border-bottom:1px solid var(--dark-line);background:var(--dark-2)}
+  .terminal .t-head i{width:11px;height:11px;border-radius:50%;display:block}
+  .terminal .t-head .t-title{margin-left:6px;font-family:var(--mono);font-size:12.5px;color:#8fa398}
+  .terminal pre{margin:0;padding:15px 17px;font-family:var(--mono);font-size:13px;line-height:1.75;color:#cfe0d4;overflow-x:auto;white-space:pre}
+  .terminal .tp{color:#7fe3bb}.terminal .tc{color:#6d7f72}.terminal .ts{color:#f0c674}
 
   /* ---------- typography ---------- */
-  h1{font-size:34px;line-height:1.2;margin:0 0 10px;font-weight:700;letter-spacing:-.01em}
-  h2{font-size:24px;line-height:1.3;margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:10px}
-  h2 .num{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent-text);background:var(--accent-soft);border-radius:6px;padding:3px 8px;flex:none}
-  h3{font-size:17.5px;margin:24px 0 8px;font-weight:650}
+  h2{font-size:25px;line-height:1.3;margin:0 0 12px;font-weight:700;display:flex;align-items:center;gap:11px}
+  h2 .num{font-family:var(--mono);font-size:13.5px;font-weight:700;color:var(--accent-text);background:var(--accent-soft);border:1px solid var(--border-soft);border-radius:7px;padding:4px 9px;flex:none}
+  h3{font-size:18px;margin:26px 0 8px;font-weight:700}
   p{margin:0 0 14px}
-  .lede{font-size:17.5px;color:var(--muted);line-height:1.6;margin-bottom:20px}
   ul,ol{margin:0 0 14px;padding-left:24px}
-  li{margin-bottom:5px}
+  li{margin-bottom:6px}
   li::marker{color:var(--faint)}
   .muted{color:var(--muted)}
-  .small{font-size:13.5px}
+  .small{font-size:14px}
 
-  /* ---------- meta strip ---------- */
-  .meta{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 22px}
-  .meta .chip{display:inline-flex;gap:6px;align-items:baseline;font-size:13px;border:1px solid var(--border);border-radius:999px;padding:4px 12px;background:var(--bg-soft)}
-  .meta .chip b{font-weight:600}
-  .meta .chip span{color:var(--muted)}
+  /* ---------- three pillars ---------- */
+  .pillars{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin:4px 0 18px}
+  .pillar{background:var(--surface);border:1px solid var(--border);border-top:4px solid var(--accent);border-radius:10px;padding:16px 17px}
+  .pillar .pi{font-family:var(--mono);font-size:12px;font-weight:700;color:var(--accent-text);background:var(--accent-soft);border-radius:6px;display:inline-block;padding:3px 8px;margin-bottom:9px}
+  .pillar b{display:block;font-size:16.5px;margin-bottom:5px}
+  .pillar p{font-size:14.5px;color:var(--muted);margin:0;line-height:1.6}
 
   /* ---------- callouts ---------- */
-  .callout{border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;background:var(--bg-soft);padding:14px 16px;margin:0 0 18px}
+  .callout{border:1px solid var(--border);border-left:4px solid var(--accent);border-radius:0 var(--radius) var(--radius) 0;background:var(--surface);padding:15px 17px;margin:0 0 18px}
   .callout p:last-child{margin-bottom:0}
-  .callout.warn{border-left-color:var(--amber)}
-  .callout .ct{font-weight:650;font-size:14px;margin-bottom:4px;display:flex;gap:8px;align-items:center}
+  .callout.warn{border-left-color:var(--amber-line);background:var(--amber-soft)}
+  .callout .ct{font-weight:700;font-size:14.5px;margin-bottom:4px}
   .callout.warn .ct{color:var(--amber)}
 
   /* ---------- code blocks ---------- */
-  .codeblock{position:relative;margin:0 0 18px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border)}
-  .codeblock .cb-head{display:flex;align-items:center;justify-content:space-between;background:var(--bg-soft);border-bottom:1px solid var(--border-soft);padding:6px 8px 6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
-  .copybtn{font-family:var(--font);font-size:12.5px;font-weight:500;background:var(--bg);border:1px solid var(--border);border-radius:6px;padding:4px 12px;cursor:pointer;color:var(--text);display:inline-flex;align-items:center;gap:6px;min-height:2rem}
-  .copybtn:hover{background:var(--bg-soft)}
-  .copybtn.done{color:var(--green);border-color:var(--green)}
-  .codeblock pre{margin:0;background:var(--bg-code);color:var(--code-text);padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.6}
-  .codeblock pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit}
+  .codeblock{position:relative;margin:0 0 18px;border-radius:var(--radius);overflow:hidden;border:1px solid var(--border);max-width:100%;background:var(--code-bg)}
+  .codeblock .cb-head{display:flex;align-items:center;justify-content:space-between;gap:10px;background:var(--surface-2);border-bottom:1px solid var(--border-soft);padding:6px 8px 6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .codeblock .cb-head span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  .copybtn{font-family:var(--font);font-size:13px;font-weight:600;background:var(--surface);border:1px solid var(--border);border-radius:7px;padding:4px 13px;cursor:pointer;color:var(--ink);flex:none;min-height:2rem}
+  .copybtn:hover{background:var(--surface-2)}
+  .copybtn.done{color:var(--accent-text);border-color:var(--accent);background:var(--accent-soft)}
+  .codeblock pre{margin:0;background:var(--code-bg);color:var(--code-text);padding:16px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.65;max-width:100%}
+  .codeblock pre code{background:none;border:none;padding:0;font-size:inherit;color:inherit;overflow-wrap:normal}
   .tok-k{color:#ff7b72}.tok-s{color:#a5d6ff}.tok-c{color:#8b949e;font-style:italic}.tok-f{color:#d2a8ff}.tok-n{color:#79c0ff}
-  @media (prefers-color-scheme: light){ .tok-k{color:#cf222e}.tok-s{color:#0a3069}.tok-c{color:#59636e}.tok-f{color:#8250df}.tok-n{color:#0550ae} }
+  @media (prefers-color-scheme: light){ .tok-k{color:#ff7b72}.tok-s{color:#a5d6ff}.tok-c{color:#8b949e}.tok-f{color:#d2a8ff}.tok-n{color:#79c0ff} }
 
   /* ---------- tables ---------- */
-  .tblwrap{overflow-x:auto;margin:0 0 18px;border:1px solid var(--border);border-radius:var(--radius)}
-  table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:520px}
-  th{text-align:left;background:var(--bg-soft);font-weight:600;padding:9px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
-  td{padding:9px 14px;border-bottom:1px solid var(--border-soft);vertical-align:top}
+  .tblwrap{overflow-x:auto;margin:0 0 18px;border:1px solid var(--border);border-radius:var(--radius);background:var(--surface);max-width:100%}
+  table{border-collapse:collapse;width:100%;font-size:15px}
+  th{text-align:left;background:var(--surface-2);font-weight:700;padding:10px 14px;border-bottom:1px solid var(--border);white-space:nowrap}
+  td{padding:10px 14px;border-bottom:1px solid var(--border-soft);vertical-align:top}
   tr:last-child td{border-bottom:none}
-  td code{white-space:nowrap}
-  .method{font-family:var(--mono);font-size:12px;font-weight:700;border-radius:5px;padding:2px 7px;white-space:nowrap}
-  .m-post{background:var(--green-soft);color:var(--green)}
-  .m-get{background:var(--accent-soft);color:var(--accent-text)}
+  tbody tr:hover td{background:var(--bg)}
+  .method{font-family:var(--mono);font-size:12px;font-weight:700;border-radius:5px;padding:2px 8px;white-space:nowrap}
+  .m-post{background:var(--green-soft);color:var(--accent-text)}
+  .m-get{background:#dcebf7;color:#0b4f8a}
+  @media (prefers-color-scheme: dark){ .m-get{background:#122a3d;color:#8ec7f5} }
 
   /* ---------- tree ---------- */
-  .tree{font-family:var(--mono);font-size:13.5px;line-height:1.75;background:var(--bg-soft);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;overflow-x:auto;white-space:pre;margin:0 0 18px}
-  .tree .d{color:var(--accent-text);font-weight:600}
-  .tree .c{color:var(--faint)}
+  .treewrap{border:1px solid var(--border);border-radius:var(--radius);background:var(--code-bg);margin:0 0 18px;max-width:100%;overflow:hidden}
+  .treewrap .cb-head{display:flex;align-items:center;justify-content:space-between;background:var(--surface-2);border-bottom:1px solid var(--border-soft);padding:6px 8px 6px 14px;font-family:var(--mono);font-size:12.5px;color:var(--muted)}
+  .tree{font-family:var(--mono);font-size:13px;line-height:1.8;color:var(--code-text);padding:16px 18px;overflow-x:auto;white-space:pre;margin:0;max-width:100%}
+  .tree .d{color:#7fe3bb;font-weight:700}
+  .tree .c{color:#77867c}
 
   /* ---------- flow diagram ---------- */
-  .flow{display:flex;flex-direction:column;gap:0;margin:0 0 18px}
-  .flow .step{display:flex;gap:14px;align-items:flex-start}
-  .flow .rail{display:flex;flex-direction:column;align-items:center;flex:none;width:34px}
-  .flow .ball{width:34px;height:34px;border-radius:50%;background:var(--accent-soft);color:var(--accent-text);display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:14px;border:1px solid var(--border)}
-  .flow .line{width:2px;flex:1;min-height:18px;background:var(--border)}
+  .flow{display:flex;flex-direction:column;margin:6px 0 18px}
+  .flow .step{display:flex;gap:15px;align-items:stretch}
+  .flow .rail{display:flex;flex-direction:column;align-items:center;flex:none;width:38px}
+  .flow .ball{width:38px;height:38px;border-radius:10px;background:var(--dark);color:#7fe3bb;display:flex;align-items:center;justify-content:center;font-family:var(--mono);font-weight:700;font-size:15px;flex:none}
+  @media (prefers-color-scheme: dark){ .flow .ball{background:var(--accent-soft);color:var(--accent-text)} }
+  .flow .line{width:2px;flex:1;min-height:16px;background:var(--border)}
   .flow .step:last-child .line{display:none}
-  .flow .body{padding-bottom:20px;min-width:0}
-  .flow .body b{display:block;font-size:15.5px;margin-bottom:2px}
-  .flow .body p{margin:0;font-size:14.5px;color:var(--muted)}
+  .flow .body{padding:2px 0 22px;min-width:0;flex:1}
+  .flow .body .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:13px 16px}
+  .flow .body b{display:block;font-size:16px;margin-bottom:3px}
+  .flow .body p{margin:0;font-size:15px;color:var(--muted)}
 
-  /* ---------- steps (deploy / run) ---------- */
+  /* ---------- steps ---------- */
   .steps{counter-reset:st;list-style:none;padding:0;margin:0 0 16px}
-  .steps li{counter-increment:st;position:relative;padding:0 0 16px 44px;margin:0}
-  .steps li::before{content:counter(st);position:absolute;left:0;top:1px;width:28px;height:28px;border-radius:50%;border:1px solid var(--border);background:var(--bg-soft);font-family:var(--mono);font-size:13px;font-weight:700;display:flex;align-items:center;justify-content:center;color:var(--accent-text)}
+  .steps li{counter-increment:st;position:relative;padding:0 0 18px 46px;margin:0}
+  .steps li::before{content:counter(st);position:absolute;left:0;top:1px;width:30px;height:30px;border-radius:9px;background:var(--dark);color:#7fe3bb;font-family:var(--mono);font-size:13.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+  @media (prefers-color-scheme: dark){ .steps li::before{background:var(--accent-soft);color:var(--accent-text)} }
   .steps li b{display:block;margin-bottom:2px}
 
-  footer{border-top:1px solid var(--border-soft);margin-top:44px;padding-top:18px;font-size:13.5px;color:var(--muted)}
+  footer{border-top:1px solid var(--border);margin-top:44px;padding-top:18px;font-size:14px;color:var(--muted)}
+  #toTop{position:fixed;right:18px;bottom:18px;z-index:90;width:44px;height:44px;border-radius:50%;border:1px solid var(--border);background:var(--surface);color:var(--ink);cursor:pointer;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(0,0,0,.16)}
+  #toTop.on{display:flex}
+  .scrim{display:none}
 
   /* ---------- mobile ---------- */
   @media (max-width:900px){
     .navtoggle{display:none}
-    .scrim{display:none}
-    .topbar{gap:8px;padding:10px 14px}
-    .topbar .ext span{display:none}
+    .topbar{gap:8px;padding:9px 12px;flex-wrap:wrap}
     .topbar .badge{display:none}
+    .topbar .ext span{display:none}
     .topbar .repo .path .docsuffix{display:none}
     .layout{flex-direction:column}
     aside{position:static;width:100%;height:auto;overflow:visible;border-right:none;border-bottom:1px solid var(--border);padding:16px 16px 18px}
     aside .group{margin:14px 2px 6px}
-    aside .group:first-child{margin-top:0}
+    aside .group:first-of-type{margin-top:14px}
     aside nav{display:flex;flex-wrap:wrap;gap:6px}
-    aside nav a{border:1px solid var(--border);border-left:1px solid var(--border);border-radius:999px;padding:7px 14px;background:var(--bg-soft);min-height:2.25rem;align-items:center}
+    aside nav a{border:1px solid var(--border);border-left:1px solid var(--border);border-radius:999px;padding:7px 14px;background:var(--bg);align-items:center}
     aside nav a.active{border-color:var(--accent)}
     aside .side-note{margin:16px 2px 0}
-    main{padding:26px 18px 70px;width:100%}
+    .scrim{display:none}
+    main{padding:0 16px 70px;width:100%}
+    .hero{margin:0 -16px 0;padding:26px 18px 24px;border-radius:0 0 12px 12px}
     h1{font-size:27px}
-    h2{font-size:21px}
-    table{min-width:0}
-    td code{white-space:normal;overflow-wrap:anywhere}
-    .tree{font-size:12px}
-    .codeblock pre{font-size:12.5px}
+    .lede{font-size:16.5px}
+    h2{font-size:21.5px}
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .pillars{grid-template-columns:1fr}
+    .terminal pre{font-size:12px;padding:13px 14px;white-space:pre;overflow-x:auto;overflow-wrap:normal}
+    .tree{font-size:11.5px;padding:13px 14px;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible}
+    .codeblock pre{font-size:12.5px;padding:13px 14px;white-space:pre-wrap;overflow-wrap:anywhere;overflow-x:visible}
+    /* tables become stacked cards */
+    .tblwrap{border:none;background:transparent;overflow:visible}
+    table,tbody,tr,td{display:block;width:100%}
+    thead{display:none}
+    tbody tr{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin-bottom:10px;padding:6px 4px}
+    tbody tr:hover td{background:transparent}
+    td{border-bottom:1px solid var(--border-soft);padding:8px 12px}
+    td:last-child{border-bottom:none}
+    td::before{content:attr(data-l);display:block;font-size:12px;font-weight:700;color:var(--faint);margin-bottom:2px}
   }
 </style>
 </head>
 <body>
+<div id="progress"></div>
 
 <header class="topbar">
-  <button class="navtoggle" id="navToggle" aria-expanded="false" aria-controls="sidebar">
+  <button class="navtoggle" id="navToggle" aria-expanded="false" aria-controls="sidebar" aria-label="সূচিপত্র খুলুন">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M1 2.75A.75.75 0 0 1 1.75 2h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 2.75Zm0 5A.75.75 0 0 1 1.75 7h12.5a.75.75 0 0 1 0 1.5H1.75A.75.75 0 0 1 1 7.75ZM1.75 12h12.5a.75.75 0 0 1 0 1.5H1.75a.75.75 0 0 1 0-1.5Z"/></svg>
-    সূচিপত্র
+    সূচি
   </button>
+  <div class="mark" aria-hidden="true">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M13 2 4.5 13.5H11L9.5 22 19 10h-6.5L13 2z"/></svg>
+  </div>
   <div class="repo">
-    <svg width="20" height="20" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M2 2.5A2.5 2.5 0 0 1 4.5 0h8.75a.75.75 0 0 1 .75.75v12.5a.75.75 0 0 1-.75.75h-2.5a.75.75 0 0 1 0-1.5h1.75v-2h-8a1 1 0 0 0-.714 1.7.75.75 0 1 1-1.072 1.05A2.495 2.495 0 0 1 2 11.5Zm10.5-1h-8a1 1 0 0 0-1 1v6.708A2.486 2.486 0 0 1 4.5 9h8ZM5 12.25v3.25a.25.25 0 0 0 .4.2l1.45-1.087a.249.249 0 0 1 .3 0L8.6 15.7a.25.25 0 0 0 .4-.2v-3.25a.25.25 0 0 0-.25-.25h-3.5a.25.25 0 0 0-.25.25Z"/></svg>
     <div class="path"><b>sohel622</b> <span>/</span> <b>bolt.new</b> <span class="docsuffix">· ব্যাকএন্ড ডকুমেন্টেশন</span></div>
   </div>
   <div class="spacer"></div>
-  <span class="badge"><span class="dot"></span> স্ন্যাপশট · <span style="font-family:var(--mono)">eda10b1</span></span>
+  <span class="badge"><span class="dot"></span> স্ন্যাপশট · <span class="mono">eda10b1</span></span>
   <a class="ext" href="https://github.com/sohel622/bolt.new" target="_blank" rel="noopener">
     <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
     <span>GitHub-এ রিপো</span>
@@ -188,6 +249,12 @@
 
 <div class="layout">
   <aside id="sidebar">
+    <div class="searchbox">
+      <svg width="15" height="15" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+      <input type="search" id="docSearch" placeholder="ডকুমেন্টে খুঁজুন… যেমন: API, WebContainer" aria-label="ডকুমেন্টে খুঁজুন">
+      <button class="clear" id="searchClear" aria-label="খোঁজা মুছুন">✕</button>
+    </div>
+    <p class="search-status" id="searchStatus"></p>
     <div class="group">শুরু</div>
     <nav>
       <a href="#overview">পরিচিতি</a>
@@ -212,29 +279,40 @@
     <p class="side-note">এই ডকুমেন্টটি <b>sohel622/bolt.new</b> ফর্কের কোড পড়ে তৈরি — StackBlitz-এর ওপেন-সোর্স bolt.new-এর ১৭ ডিসেম্বর ২০২৪-এর স্ন্যাপশট (কমিট <span style="font-family:var(--mono)">eda10b1</span>)।</p>
   </aside>
 
-  <main>
-    <!-- ============ OVERVIEW ============ -->
-    <section id="overview">
-      <h1>Bolt.new — ব্যাকএন্ড ডকুমেন্টেশন</h1>
-      <p class="lede">bolt.new ব্রাউজারেই প্রম্পট থেকে ফুল-স্ট্যাক ওয়েব অ্যাপ বানায়। এই পেজে শুধু এর <b>ব্যাক সাইড</b> — সার্ভার, API রুট, LLM স্ট্রিমিং আর রানটাইম — কীভাবে কাজ করে, তা ধাপে ধাপে সাজানো হলো।</p>
-      <div class="meta">
-        <span class="chip"><b>রিপো</b><span>sohel622/bolt.new (ফর্ক)</span></span>
-        <span class="chip"><b>আপস্ট্রিম</b><span>stackblitz/bolt.new</span></span>
-        <span class="chip"><b>স্ন্যাপশট</b><span>eda10b1 · ১৭ ডিসেম্বর ২০২৪</span></span>
-        <span class="chip"><b>ফ্রেমওয়ার্ক</b><span>Remix + Vite</span></span>
-        <span class="chip"><b>হোস্টিং</b><span>Cloudflare Pages</span></span>
+  <main id="mainCol">
+    <!-- ============ OVERVIEW / HERO ============ -->
+    <section id="overview" style="border-top:none;padding-top:0">
+      <div class="hero">
+        <span class="kicker"><span class="dot"></span> BACKEND · SERVER SIDE</span>
+        <h1>Bolt.new — ব্যাকএন্ড ডকুমেন্টেশন</h1>
+        <p class="lede">bolt.new ব্রাউজারেই প্রম্পট থেকে ফুল-স্ট্যাক ওয়েব অ্যাপ বানায়। এই পেজে শুধু এর <b>ব্যাক সাইড</b> — সার্ভার, API রুট, LLM স্ট্রিমিং আর রানটাইম — কীভাবে কাজ করে, তা ধাপে ধাপে সাজানো হলো।</p>
+        <div class="stats">
+          <div class="stat"><div class="v">3টি</div><div class="k">API রুট (/api/chat, /api/enhancer, /api/models)</div></div>
+          <div class="stat"><div class="v">Remix + Vite</div><div class="k">ফ্রেমওয়ার্ক · React 18 · TypeScript</div></div>
+          <div class="stat"><div class="v">Cloudflare Pages</div><div class="k">হোস্টিং · এজ ফাংশন</div></div>
+          <div class="stat"><div class="v">eda10b1</div><div class="k">স্ন্যাপশট · ১৭ ডিসেম্বর ২০২৪</div></div>
+        </div>
+        <div class="terminal" aria-label="একটি চ্যাট রিকোয়েস্টের ফ্লো">
+          <div class="t-head"><i style="background:#f85149"></i><i style="background:#e8bc45"></i><i style="background:#3ecf9a"></i><span class="t-title">request-flow — একটা প্রম্পটের যাত্রা</span></div>
+          <pre><span class="tp">POST</span> /api/chat            <span class="tc"># ব্রাউজার → Remix সার্ভার রুট</span>
+  → streamText()          <span class="tc"># LLM লেয়ার · app/lib/.server/llm/</span>
+  → Claude <span class="ts">streaming…</span>     <span class="tc"># টোকেন আসামাত্রই ফেরত</span>
+  → &lt;boltArtifact&gt;       <span class="tc"># ফাইল ও কমান্ডের নির্দেশ</span>
+  → WebContainer          <span class="tc"># ব্রাউজারেই Node.js রান + প্রিভিউ</span></pre>
+        </div>
       </div>
 
+      <div style="padding-top:30px">
       <p>একটা সাধারণ ওয়েব অ্যাপের মতো এখানে আলাদা ডেটাবেস-সার্ভার বা REST ব্যাকএন্ড নেই। ব্যাকএন্ড বলতে এখানে মূলত তিনটি জিনিস:</p>
-      <ul>
-        <li><b>Remix সার্ভার রুট</b> — Cloudflare Pages-এ চলা সার্ভারলেস ফাংশন, যেগুলো ব্রাউজার থেকে রিকোয়েস্ট নেয়।</li>
-        <li><b>LLM লেয়ার</b> — <code>app/lib/.server/llm/</code>-এর ভেতরে থাকা কোড, যা AI প্রোভাইডারের (মূলত Anthropic Claude) কাছে প্রম্পট পাঠায় আর উত্তর <b>স্ট্রিম</b> করে ফেরত আনে। সার্ভার সাইডে থাকায় API key ব্রাউজারে ফাঁস হয় না।</li>
-        <li><b>WebContainer রানটাইম</b> — কোড চালানোর আসল ইঞ্জিন। এটি সার্ভারে নয়, <b>ব্যবহারকারীর ব্রাউজারের ভেতরেই</b> Node.js চালায়। ব্যাকএন্ডের কাজ এখানে শুধু সঠিক সিকিউরিটি হেডার পাঠানো, যাতে ব্রাউজার এই রানটাইম চালাতে পারে।</li>
-      </ul>
-
+      <div class="pillars">
+        <div class="pillar"><span class="pi">01 · SERVER</span><b>Remix সার্ভার রুট</b><p>Cloudflare Pages-এ চলা সার্ভারলেস ফাংশন, যেগুলো ব্রাউজার থেকে রিকোয়েস্ট নেয়।</p></div>
+        <div class="pillar"><span class="pi">02 · LLM</span><b>LLM লেয়ার</b><p><code>app/lib/.server/llm/</code>-এর ভেতরে থাকা কোড, যা AI প্রোভাইডারের (মূলত Anthropic Claude) কাছে প্রম্পট পাঠায় আর উত্তর <b>স্ট্রিম</b> করে ফেরত আনে। সার্ভার সাইডে থাকায় API key ব্রাউজারে ফাঁস হয় না।</p></div>
+        <div class="pillar"><span class="pi">03 · RUNTIME</span><b>WebContainer রানটাইম</b><p>কোড চালানোর আসল ইঞ্জিন। এটি সার্ভারে নয়, <b>ব্যবহারকারীর ব্রাউজারের ভেতরেই</b> Node.js চালায়। ব্যাকএন্ডের কাজ এখানে শুধু সঠিক সিকিউরিটি হেডার পাঠানো, যাতে ব্রাউজার এই রানটাইম চালাতে পারে।</p></div>
+      </div>
       <div class="callout">
         <p class="ct">মূল ধারণা</p>
         <p>ব্যাকএন্ডের কাজ শুধু AI-এর সঙ্গে কথা বলা। ফাইল তৈরি, <code>npm install</code>, dev server চালানো, প্রিভিউ — সবই ঘটে ব্রাউজারের WebContainer-এ। তাই bolt.new-এর সার্ভার খরচ ও স্কেলিং অনেক হালকা।</p>
+      </div>
       </div>
     </section>
 
@@ -244,17 +322,17 @@
       <p>একজন ব্যবহারকারী প্রম্পট পাঠালে ডেটা যেভাবে ঘোরে:</p>
       <div class="flow">
         <div class="step"><div class="rail"><div class="ball">1</div><div class="line"></div></div>
-          <div class="body"><b>ব্রাউজার — চ্যাট UI</b><p>ব্যবহারকারী প্রম্পট লেখে। চ্যাট কম্পোনেন্ট (<code>app/components/chat/</code>) পুরো কথোপকথনের হিস্ট্রি সহ <code>POST /api/chat</code>-এ রিকোয়েস্ট পাঠায়।</p></div></div>
+          <div class="body"><div class="card"><b>ব্রাউজার — চ্যাট UI</b><p>ব্যবহারকারী প্রম্পট লেখে। চ্যাট কম্পোনেন্ট (<code>app/components/chat/</code>) পুরো কথোপকথনের হিস্ট্রি সহ <code>POST /api/chat</code>-এ রিকোয়েস্ট পাঠায়।</p></div></div></div>
         <div class="step"><div class="rail"><div class="ball">2</div><div class="line"></div></div>
-          <div class="body"><b>Remix সার্ভার রুট — <code>api.chat.ts</code></b><p>Cloudflare Pages ফাংশন রিকোয়েস্ট নেয়, সিস্টেম প্রম্পট জুড়ে দেয় এবং LLM লেয়ারকে কল করে।</p></div></div>
+          <div class="body"><div class="card"><b>Remix সার্ভার রুট — <code>api.chat.ts</code></b><p>Cloudflare Pages ফাংশন রিকোয়েস্ট নেয়, সিস্টেম প্রম্পট জুড়ে দেয় এবং LLM লেয়ারকে কল করে।</p></div></div></div>
         <div class="step"><div class="rail"><div class="ball">3</div><div class="line"></div></div>
-          <div class="body"><b>LLM লেয়ার — <code>lib/.server/llm/</code></b><p><code>getModel()</code> নির্বাচিত প্রোভাইডারের মডেল তৈরি করে, <code>streamText()</code> Vercel AI SDK দিয়ে মডেলের কাছে স্ট্রিমিং রিকোয়েস্ট পাঠায়। API key শুধু এখানেই, সার্ভারে থাকে।</p></div></div>
+          <div class="body"><div class="card"><b>LLM লেয়ার — <code>lib/.server/llm/</code></b><p><code>getModel()</code> নির্বাচিত প্রোভাইডারের মডেল তৈরি করে, <code>streamText()</code> Vercel AI SDK দিয়ে মডেলের কাছে স্ট্রিমিং রিকোয়েস্ট পাঠায়। API key শুধু এখানেই, সার্ভারে থাকে।</p></div></div></div>
         <div class="step"><div class="rail"><div class="ball">4</div><div class="line"></div></div>
-          <div class="body"><b>স্ট্রিমিং রেসপন্স</b><p>AI-এর উত্তর টুকরো টুকরো (data stream) ব্রাউজারে ফিরে আসে। উত্তরের ভেতরে থাকে বিশেষ <code>&lt;boltArtifact&gt;</code> ফরম্যাটে ফাইল ও কমান্ডের নির্দেশ।</p></div></div>
+          <div class="body"><div class="card"><b>স্ট্রিমিং রেসপন্স</b><p>AI-এর উত্তর টুকরো টুকরো (data stream) ব্রাউজারে ফিরে আসে। উত্তরের ভেতরে থাকে বিশেষ <code>&lt;boltArtifact&gt;</code> ফরম্যাটে ফাইল ও কমান্ডের নির্দেশ।</p></div></div></div>
         <div class="step"><div class="rail"><div class="ball">5</div><div class="line"></div></div>
-          <div class="body"><b>ব্রাউজার — মেসেজ পার্সার + Workbench</b><p><code>MessageParser</code> স্ট্রিম পড়ে artifact আলাদা করে; <code>ActionRunner</code> প্রতিটি নির্দেশ WebContainer-এ পাঠায় — ফাইল লেখে, প্যাকেজ ইনস্টল করে, কমান্ড চালায়।</p></div></div>
+          <div class="body"><div class="card"><b>ব্রাউজার — মেসেজ পার্সার + Workbench</b><p><code>MessageParser</code> স্ট্রিম পড়ে artifact আলাদা করে; <code>ActionRunner</code> প্রতিটি নির্দেশ WebContainer-এ পাঠায় — ফাইল লেখে, প্যাকেজ ইনস্টল করে, কমান্ড চালায়।</p></div></div></div>
         <div class="step"><div class="rail"><div class="ball">6</div></div>
-          <div class="body"><b>WebContainer — প্রিভিউ</b><p>ব্রাউজারের ভেতরের Node.js রানটাইমে dev server ওঠে, তার URL iframe প্রিভিউতে দেখায়। কোনো কোডই bolt-এর সার্ভারে রান হয় না।</p></div></div>
+          <div class="body"><div class="card"><b>WebContainer — প্রিভিউ</b><p>ব্রাউজারের ভেতরের Node.js রানটাইমে dev server ওঠে, তার URL iframe প্রিভিউতে দেখায়। কোনো কোডই bolt-এর সার্ভারে রান হয় না।</p></div></div></div>
       </div>
       <div class="callout warn">
         <p class="ct">লক্ষ্য করুন</p>
@@ -269,14 +347,14 @@
         <table>
           <thead><tr><th>অংশ</th><th>প্রযুক্তি</th><th>ব্যাকএন্ডে ভূমিকা</th></tr></thead>
           <tbody>
-            <tr><td><b>ফ্রেমওয়ার্ক</b></td><td>Remix (React 18) + Vite + TypeScript</td><td>সার্ভার রুট ও UI একই অ্যাপে; <code>.server</code> ফোল্ডারের কোড কখনো ব্রাউজারে যায় না</td></tr>
-            <tr><td><b>হোস্টিং</b></td><td>Cloudflare Pages + Wrangler</td><td>সার্ভার রুটগুলো এজ ফাংশন হিসেবে চলে; <code>@remix-run/cloudflare</code> অ্যাডাপ্টার</td></tr>
-            <tr><td><b>AI SDK</b></td><td>Vercel AI SDK (<code>ai</code> প্যাকেজ)</td><td><code>streamText</code> দিয়ে সব প্রোভাইডারের জন্য একই স্ট্রিমিং ইন্টারফেস</td></tr>
-            <tr><td><b>AI প্রোভাইডার</b></td><td>Anthropic Claude (ডিফল্ট), OpenAI, Google, xAI, DeepSeek, Mistral, Ollama, OpenRouter প্রভৃতি</td><td><code>getModel()</code> প্রোভাইডার অনুযায়ী মডেল বদলায়; key আসে এনভায়রনমেন্ট থেকে</td></tr>
-            <tr><td><b>রানটাইম</b></td><td>WebContainers (<code>@webcontainer/api</code>)</td><td>ব্রাউজারে Node.js; ব্যাকএন্ড শুধু COOP/COEP হেডার সরবরাহ করে</td></tr>
-            <tr><td><b>স্টেট</b></td><td>Nano Stores</td><td>Workbench, ফাইল ও টার্মিনালের স্টেট (ক্লায়েন্ট সাইড)</td></tr>
-            <tr><td><b>এডিটর / টার্মিনাল</b></td><td>CodeMirror 6, xterm.js</td><td>ক্লায়েন্ট সাইড; WebContainer-এর শেলের সঙ্গে যুক্ত</td></tr>
-            <tr><td><b>প্যাকেজ ম্যানেজার</b></td><td>pnpm · Node 18+</td><td>লোকাল ডেভেলপমেন্ট ও বিল্ডের জন্য</td></tr>
+            <tr><td data-l="অংশ"><b>ফ্রেমওয়ার্ক</b></td><td data-l="প্রযুক্তি">Remix (React 18) + Vite + TypeScript</td><td data-l="ব্যাকএন্ডে ভূমিকা">সার্ভার রুট ও UI একই অ্যাপে; <code>.server</code> ফোল্ডারের কোড কখনো ব্রাউজারে যায় না</td></tr>
+            <tr><td data-l="অংশ"><b>হোস্টিং</b></td><td data-l="প্রযুক্তি">Cloudflare Pages + Wrangler</td><td data-l="ব্যাকএন্ডে ভূমিকা">সার্ভার রুটগুলো এজ ফাংশন হিসেবে চলে; <code>@remix-run/cloudflare</code> অ্যাডাপ্টার</td></tr>
+            <tr><td data-l="অংশ"><b>AI SDK</b></td><td data-l="প্রযুক্তি">Vercel AI SDK (<code>ai</code> প্যাকেজ)</td><td data-l="ব্যাকএন্ডে ভূমিকা"><code>streamText</code> দিয়ে সব প্রোভাইডারের জন্য একই স্ট্রিমিং ইন্টারফেস</td></tr>
+            <tr><td data-l="অংশ"><b>AI প্রোভাইডার</b></td><td data-l="প্রযুক্তি">Anthropic Claude (ডিফল্ট), OpenAI, Google, xAI, DeepSeek, Mistral, Ollama, OpenRouter প্রভৃতি</td><td data-l="ব্যাকএন্ডে ভূমিকা"><code>getModel()</code> প্রোভাইডার অনুযায়ী মডেল বদলায়; key আসে এনভায়রনমেন্ট থেকে</td></tr>
+            <tr><td data-l="অংশ"><b>রানটাইম</b></td><td data-l="প্রযুক্তি">WebContainers (<code>@webcontainer/api</code>)</td><td data-l="ব্যাকএন্ডে ভূমিকা">ব্রাউজারে Node.js; ব্যাকএন্ড শুধু COOP/COEP হেডার সরবরাহ করে</td></tr>
+            <tr><td data-l="অংশ"><b>স্টেট</b></td><td data-l="প্রযুক্তি">Nano Stores</td><td data-l="ব্যাকএন্ডে ভূমিকা">Workbench, ফাইল ও টার্মিনালের স্টেট (ক্লায়েন্ট সাইড)</td></tr>
+            <tr><td data-l="অংশ"><b>এডিটর / টার্মিনাল</b></td><td data-l="প্রযুক্তি">CodeMirror 6, xterm.js</td><td data-l="ব্যাকএন্ডে ভূমিকা">ক্লায়েন্ট সাইড; WebContainer-এর শেলের সঙ্গে যুক্ত</td></tr>
+            <tr><td data-l="অংশ"><b>প্যাকেজ ম্যানেজার</b></td><td data-l="প্রযুক্তি">pnpm · Node 18+</td><td data-l="ব্যাকএন্ডে ভূমিকা">লোকাল ডেভেলপমেন্ট ও বিল্ডের জন্য</td></tr>
           </tbody>
         </table>
       </div>
@@ -286,7 +364,9 @@
     <section id="structure">
       <h2><span class="num">03</span> ফোল্ডার স্ট্রাকচার</h2>
       <p>রিপোর যেসব অংশ ব্যাকএন্ডের সঙ্গে সরাসরি জড়িত:</p>
-      <div class="tree"><span class="d">bolt.new/</span>
+      <div class="treewrap">
+        <div class="cb-head"><span>bolt.new — repo tree</span><button class="copybtn" data-copy="treePre">কপি</button></div>
+        <pre class="tree" id="treePre"><span class="d">bolt.new/</span>
 ├── <span class="d">app/</span>
 │   ├── <span class="d">routes/</span>
 │   │   ├── api.chat.ts          <span class="c"># মূল চ্যাট API — LLM স্ট্রিমিং</span>
@@ -310,7 +390,8 @@
 │   └── [[path]].ts             <span class="c"># Cloudflare Pages ফাংশন এন্ট্রি</span>
 ├── wrangler.toml               <span class="c"># Cloudflare কনফিগ ও বাইন্ডিং</span>
 ├── vite.config.ts              <span class="c"># Cloudflare + Remix প্লাগইন</span>
-└── .env.example                <span class="c"># দরকারি API key-এর তালিকা</span></div>
+└── .env.example                <span class="c"># দরকারি API key-এর তালিকা</span></pre>
+      </div>
       <p class="small muted">Remix-এর নিয়ম: <code>.server</code> নামের ফোল্ডার/ফাইলের কোড বিল্ডের সময় ক্লায়েন্ট বান্ডল থেকে বাদ পড়ে — তাই API key ব্যবহারকারী কোড নিরাপদে এখানে রাখা যায়।</p>
     </section>
 
@@ -322,9 +403,9 @@
         <table>
           <thead><tr><th>রুট</th><th>মেথড</th><th>কাজ</th><th>রেসপন্স</th></tr></thead>
           <tbody>
-            <tr><td><code>/api/chat</code></td><td><span class="method m-post">POST</span></td><td>চ্যাট মেসেজ নিয়ে সিস্টেম প্রম্পটসহ LLM-এ পাঠায়; মূল জেনারেশন এখানেই হয়</td><td>স্ট্রিমিং (AI SDK data stream)</td></tr>
-            <tr><td><code>/api/enhancer</code></td><td><span class="method m-post">POST</span></td><td>ব্যবহারকারীর ছোট/অস্পষ্ট প্রম্পটকে LLM দিয়ে বিস্তারিত প্রম্পটে সাজিয়ে দেয়</td><td>স্ট্রিমিং টেক্সট</td></tr>
-            <tr><td><code>/api/models</code></td><td><span class="method m-get">GET</span></td><td>কোন কোন প্রোভাইডারের API key সেট করা আছে, সেই অনুযায়ী ব্যবহারযোগ্য মডেলের তালিকা দেয়</td><td>JSON</td></tr>
+            <tr><td data-l="রুট"><code>/api/chat</code></td><td data-l="মেথড"><span class="method m-post">POST</span></td><td data-l="কাজ">চ্যাট মেসেজ নিয়ে সিস্টেম প্রম্পটসহ LLM-এ পাঠায়; মূল জেনারেশন এখানেই হয়</td><td data-l="রেসপন্স">স্ট্রিমিং (AI SDK data stream)</td></tr>
+            <tr><td data-l="রুট"><code>/api/enhancer</code></td><td data-l="মেথড"><span class="method m-post">POST</span></td><td data-l="কাজ">ব্যবহারকারীর ছোট/অস্পষ্ট প্রম্পটকে LLM দিয়ে বিস্তারিত প্রম্পটে সাজিয়ে দেয়</td><td data-l="রেসপন্স">স্ট্রিমিং টেক্সট</td></tr>
+            <tr><td data-l="রুট"><code>/api/models</code></td><td data-l="মেথড"><span class="method m-get">GET</span></td><td data-l="কাজ">কোন কোন প্রোভাইডারের API key সেট করা আছে, সেই অনুযায়ী ব্যবহারযোগ্য মডেলের তালিকা দেয়</td><td data-l="রেসপন্স">JSON</td></tr>
           </tbody>
         </table>
       </div>
@@ -415,9 +496,9 @@
         <table>
           <thead><tr><th>Action type</th><th>অর্থ</th><th>কে কার্যকর করে</th></tr></thead>
           <tbody>
-            <tr><td><code>file</code></td><td>নির্দিষ্ট পাথে ফাইল তৈরি/আপডেট</td><td>ActionRunner → WebContainer FS</td></tr>
-            <tr><td><code>shell</code></td><td>টার্মিনালে কমান্ড চালানো (যেমন <code>npm install</code>)</td><td>ActionRunner → WebContainer শেল</td></tr>
-            <tr><td><code>start</code></td><td>dev server চালু করা (দীর্ঘমেয়াদি প্রসেস)</td><td>ActionRunner → WebContainer শেল</td></tr>
+            <tr><td data-l="Action type"><code>file</code></td><td data-l="অর্থ">নির্দিষ্ট পাথে ফাইল তৈরি/আপডেট</td><td data-l="কে কার্যকর করে">ActionRunner → WebContainer FS</td></tr>
+            <tr><td data-l="Action type"><code>shell</code></td><td data-l="অর্থ">টার্মিনালে কমান্ড চালানো (যেমন <code>npm install</code>)</td><td data-l="কে কার্যকর করে">ActionRunner → WebContainer শেল</td></tr>
+            <tr><td data-l="Action type"><code>start</code></td><td data-l="অর্থ">dev server চালু করা (দীর্ঘমেয়াদি প্রসেস)</td><td data-l="কে কার্যকর করে">ActionRunner → WebContainer শেল</td></tr>
           </tbody>
         </table>
       </div>
@@ -526,11 +607,17 @@ cd bolt.new</code></pre></div></li>
         <p>সোর্স: <a href="https://github.com/sohel622/bolt.new" target="_blank" rel="noopener">github.com/sohel622/bolt.new</a> · আপস্ট্রিম: <a href="https://github.com/stackblitz/bolt.new" target="_blank" rel="noopener">stackblitz/bolt.new</a> · স্ন্যাপশট কমিট <span style="font-family:var(--mono)">eda10b1</span> (১৭ ডিসেম্বর ২০২৪)</p>
       </footer>
     </section>
+
+    <div class="noresults" id="noResults">এই খোঁজে কোনো অংশ মিললো না। অন্য শব্দ দিয়ে চেষ্টা করুন — যেমন <b>API</b>, <b>stream</b>, <b>deploy</b>।</div>
   </main>
 </div>
 
+<button id="toTop" aria-label="উপরে যান">
+  <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 3.25a.75.75 0 0 1 .53.22l4 4a.75.75 0 1 1-1.06 1.06L8.75 5.81v7.44a.75.75 0 0 1-1.5 0V5.81L4.53 8.53a.75.75 0 0 1-1.06-1.06l4-4A.75.75 0 0 1 8 3.25Z"/></svg>
+</button>
+
 <script>
-  // Copy buttons
+  // ---------- Copy buttons ----------
   document.querySelectorAll('.copybtn').forEach(function (btn) {
     btn.addEventListener('click', function () {
       var target = document.getElementById(btn.getAttribute('data-copy'));
@@ -542,9 +629,6 @@ cd bolt.new</code></pre></div></li>
         btn.classList.add('done');
         setTimeout(function () { btn.textContent = old; btn.classList.remove('done'); }, 1600);
       }
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        navigator.clipboard.writeText(text).then(done).catch(function () { fallback(); });
-      } else { fallback(); }
       function fallback() {
         var ta = document.createElement('textarea');
         ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
@@ -552,10 +636,13 @@ cd bolt.new</code></pre></div></li>
         try { document.execCommand('copy'); done(); } catch (e) {}
         document.body.removeChild(ta);
       }
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(done).catch(fallback);
+      } else { fallback(); }
     });
   });
 
-  // Mobile sidebar
+  // ---------- Mobile drawer nav ----------
   var sidebar = document.getElementById('sidebar');
   var toggle = document.getElementById('navToggle');
   var scrim = document.getElementById('scrim');
@@ -570,22 +657,67 @@ cd bolt.new</code></pre></div></li>
     a.addEventListener('click', function () { if (window.innerWidth <= 900) setNav(false); });
   });
 
-  // Scroll spy
+  // ---------- Scroll spy ----------
   var links = Array.prototype.slice.call(sidebar.querySelectorAll('nav a'));
-  var map = {};
-  links.forEach(function (a) { map[a.getAttribute('href').slice(1)] = a; });
+  var linkMap = {};
+  links.forEach(function (a) { linkMap[a.getAttribute('href').slice(1)] = a; });
   if ('IntersectionObserver' in window) {
     var obs = new IntersectionObserver(function (entries) {
       entries.forEach(function (e) {
         if (e.isIntersecting) {
           links.forEach(function (a) { a.classList.remove('active'); });
-          var a = map[e.target.id];
+          var a = linkMap[e.target.id];
           if (a) a.classList.add('active');
         }
       });
     }, { rootMargin: '-20% 0px -70% 0px' });
     document.querySelectorAll('main section[id]').forEach(function (s) { obs.observe(s); });
   }
+
+  // ---------- Reading progress + back to top ----------
+  var progress = document.getElementById('progress');
+  var toTop = document.getElementById('toTop');
+  function onScroll() {
+    var h = document.documentElement;
+    var max = h.scrollHeight - h.clientHeight;
+    var pct = max > 0 ? (h.scrollTop / max) * 100 : 0;
+    progress.style.width = pct + '%';
+    toTop.classList.toggle('on', h.scrollTop > 600);
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  toTop.addEventListener('click', function () { window.scrollTo({ top: 0, behavior: 'smooth' }); });
+
+  // ---------- Live search: filter sections + nav ----------
+  var searchInput = document.getElementById('docSearch');
+  var searchClear = document.getElementById('searchClear');
+  var searchStatus = document.getElementById('searchStatus');
+  var noResults = document.getElementById('noResults');
+  var sections = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  function applySearch() {
+    var q = searchInput.value.trim().toLowerCase();
+    searchClear.style.display = q ? 'block' : 'none';
+    if (!q) {
+      sections.forEach(function (s) { s.classList.remove('hidden-by-search'); });
+      links.forEach(function (a) { a.classList.remove('hidden-by-search'); });
+      searchStatus.style.display = 'none';
+      noResults.classList.remove('on');
+      return;
+    }
+    var shown = 0;
+    sections.forEach(function (s) {
+      var hit = s.textContent.toLowerCase().indexOf(q) !== -1;
+      s.classList.toggle('hidden-by-search', !hit);
+      var a = linkMap[s.id];
+      if (a) a.classList.toggle('hidden-by-search', !hit);
+      if (hit) shown++;
+    });
+    searchStatus.style.display = 'block';
+    searchStatus.textContent = shown + 'টি অংশে মিল পাওয়া গেছে';
+    noResults.classList.toggle('on', shown === 0);
+  }
+  searchInput.addEventListener('input', applySearch);
+  searchClear.addEventListener('click', function () { searchInput.value = ''; applySearch(); searchInput.focus(); });
 </script>
 </body>
 </html>
